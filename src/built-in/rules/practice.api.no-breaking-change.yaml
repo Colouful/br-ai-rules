@@ -1,0 +1,14 @@
+id: practice.api.no-breaking-change
+name: 不要随意破坏接口兼容性
+category: api
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - generic
+content:
+  zh-CN: |
+    不要随意修改已有接口字段含义、错误码、状态码或返回结构。

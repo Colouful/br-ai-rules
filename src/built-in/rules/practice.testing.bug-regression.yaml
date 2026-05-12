@@ -1,0 +1,14 @@
+id: practice.testing.bug-regression
+name: Bug 修复优先补回归测试
+category: testing
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - generic
+content:
+  zh-CN: |
+    Bug 修复优先补回归测试，避免同类问题再次出现。

@@ -4,13 +4,14 @@ import { syncCommand } from './commands/sync.js';
 import { diffCommand } from './commands/diff.js';
 import { checkCommand } from './commands/check.js';
 import { listCommand } from './commands/list.js';
+import { addCommand } from './commands/add.js';
 
 const program = new Command();
 
 program
   .name('br-rules')
   .description('BR AI Rules - AI Coding rules installer for teams')
-  .version('0.1.0');
+  .version('0.2.0');
 
 program
   .command('init')
@@ -18,13 +19,30 @@ program
   .option('--no-sync', 'Only create .ai-rules/config.json without syncing')
   .option('--language <language>', 'Rule language, default zh-CN')
   .option('--targets <targets>', 'Comma-separated targets: generic,claude,cursor')
-  .option('--rulesets <rulesets>', 'Comma-separated rulesets')
+  .option('--stack <stack>', 'Comma-separated tech stacks, e.g., react,typescript')
   .action((options) => initCommand(options));
+
+program
+  .command('add <rule-id>')
+  .description('Create a custom rule YAML template')
+  .option('--category <category>', 'Rule category, default team')
+  .option('--severity <severity>', 'Rule severity: must/should/may, default must')
+  .option('--targets <targets>', 'Comma-separated targets, default generic,claude,cursor')
+  .action((ruleId, options) => addCommand(ruleId, options));
 
 program.command('sync').description('Sync generated rule files').action(() => syncCommand());
 program.command('diff').description('Preview generated rule file changes').action(() => diffCommand());
 program.command('check').description('Check whether generated rule files are up to date').action(() => checkCommand());
-program.command('list').description('List built-in rulesets and rules').action(() => listCommand());
+
+program
+  .command('list')
+  .description('List built-in rulesets and rules')
+  .option('--assets', 'Show built-in assets')
+  .option('--custom', 'Show custom rules')
+  .option('--enabled', 'Show enabled rules')
+  .option('--disabled', 'Show disabled rules')
+  .option('--all', 'Show everything')
+  .action((options) => listCommand(options));
 
 program.parseAsync(process.argv).catch((error) => {
   console.error(error instanceof Error ? error.message : error);

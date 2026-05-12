@@ -1,0 +1,14 @@
+id: practice.testing.no-fake-result
+name: 不要伪造测试结果
+category: testing
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - generic
+content:
+  zh-CN: |
+    不要伪造测试结果。未运行测试时必须明确说明。

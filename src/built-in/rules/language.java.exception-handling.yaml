@@ -1,0 +1,14 @@
+id: language.java.exception-handling
+name: 异常处理必须规范
+category: language
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - java
+content:
+  zh-CN: |
+    异常处理必须遵循项目现有规范，不要随意吞异常或返回含糊错误。

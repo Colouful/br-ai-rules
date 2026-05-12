@@ -102,57 +102,93 @@
   },
   "hotPaths": [
     {
-      "path": "src/cli.ts",
-      "accessCount": 3,
-      "lastAccessed": 1778574491140,
-      "type": "file"
-    },
-    {
       "path": "package.json",
-      "accessCount": 2,
-      "lastAccessed": 1778574142593,
+      "accessCount": 7,
+      "lastAccessed": 1778576738826,
       "type": "file"
     },
     {
-      "path": "src/commands/init.ts",
-      "accessCount": 2,
-      "lastAccessed": 1778574407107,
-      "type": "file"
-    },
-    {
-      "path": "src/commands/sync.ts",
-      "accessCount": 1,
-      "lastAccessed": 1778574058549,
-      "type": "file"
-    },
-    {
-      "path": "src/commands/diff.ts",
-      "accessCount": 1,
-      "lastAccessed": 1778574058784,
-      "type": "file"
-    },
-    {
-      "path": "src/commands/list.ts",
-      "accessCount": 1,
-      "lastAccessed": 1778574058891,
-      "type": "file"
-    },
-    {
-      "path": "src/commands/check.ts",
-      "accessCount": 1,
-      "lastAccessed": 1778574058959,
+      "path": "src/cli.ts",
+      "accessCount": 4,
+      "lastAccessed": 1778576067478,
       "type": "file"
     },
     {
       "path": "src/core/config.ts",
-      "accessCount": 1,
-      "lastAccessed": 1778574075123,
+      "accessCount": 3,
+      "lastAccessed": 1778575877111,
+      "type": "file"
+    },
+    {
+      "path": "src/commands/init.ts",
+      "accessCount": 3,
+      "lastAccessed": 1778576016870,
+      "type": "file"
+    },
+    {
+      "path": "src/core/rules.ts",
+      "accessCount": 2,
+      "lastAccessed": 1778575930756,
       "type": "file"
     },
     {
       "path": "src/core/render.ts",
-      "accessCount": 1,
-      "lastAccessed": 1778574075512,
+      "accessCount": 2,
+      "lastAccessed": 1778575953344,
+      "type": "file"
+    },
+    {
+      "path": "src/adapters/agents.ts",
+      "accessCount": 2,
+      "lastAccessed": 1778575979653,
+      "type": "file"
+    },
+    {
+      "path": "src/adapters/claude.ts",
+      "accessCount": 2,
+      "lastAccessed": 1778575983099,
+      "type": "file"
+    },
+    {
+      "path": "src/adapters/cursor.ts",
+      "accessCount": 2,
+      "lastAccessed": 1778575986550,
+      "type": "file"
+    },
+    {
+      "path": "src/commands/sync.ts",
+      "accessCount": 2,
+      "lastAccessed": 1778576018938,
+      "type": "file"
+    },
+    {
+      "path": "src/commands/diff.ts",
+      "accessCount": 2,
+      "lastAccessed": 1778576022299,
+      "type": "file"
+    },
+    {
+      "path": "src/commands/check.ts",
+      "accessCount": 2,
+      "lastAccessed": 1778576040153,
+      "type": "file"
+    },
+    {
+      "path": "src/commands/list.ts",
+      "accessCount": 2,
+      "lastAccessed": 1778576053219,
+      "type": "file"
+    },
+    {
+      "path": "src/core/generated.ts",
+      "accessCount": 2,
+      "lastAccessed": 1778576058009,
+      "type": "file"
+    },
+    {
+      "path": "README.md",
+      "accessCount": 2,
+      "lastAccessed": 1778577003472,
       "type": "file"
     },
     {
@@ -162,39 +198,9 @@
       "type": "file"
     },
     {
-      "path": "src/core/generated.ts",
-      "accessCount": 1,
-      "lastAccessed": 1778574076491,
-      "type": "file"
-    },
-    {
-      "path": "src/core/rules.ts",
-      "accessCount": 1,
-      "lastAccessed": 1778574076960,
-      "type": "file"
-    },
-    {
       "path": "src/core/checksum.ts",
       "accessCount": 1,
       "lastAccessed": 1778574077567,
-      "type": "file"
-    },
-    {
-      "path": "src/adapters/agents.ts",
-      "accessCount": 1,
-      "lastAccessed": 1778574078033,
-      "type": "file"
-    },
-    {
-      "path": "src/adapters/claude.ts",
-      "accessCount": 1,
-      "lastAccessed": 1778574078742,
-      "type": "file"
-    },
-    {
-      "path": "src/adapters/cursor.ts",
-      "accessCount": 1,
-      "lastAccessed": 1778574079175,
       "type": "file"
     },
     {
@@ -207,6 +213,192 @@
       "path": "tsup.config.ts",
       "accessCount": 1,
       "lastAccessed": 1778574123436,
+      "type": "file"
+    },
+    {
+      "path": "docs/plans/plan-v0.2/prompts/ai-execution-prompt.md",
+      "accessCount": 1,
+      "lastAccessed": 1778575214831,
+      "type": "file"
+    },
+    {
+      "path": "docs/plans/plan-v0.2/docs/01-v0.2-prd.md",
+      "accessCount": 1,
+      "lastAccessed": 1778575245669,
+      "type": "file"
+    },
+    {
+      "path": "docs/plans/plan-v0.2/docs/02-architecture-plan.md",
+      "accessCount": 1,
+      "lastAccessed": 1778575246213,
+      "type": "file"
+    },
+    {
+      "path": "docs/plans/plan-v0.2/docs/03-implementation-tasks.md",
+      "accessCount": 1,
+      "lastAccessed": 1778575246736,
+      "type": "file"
+    },
+    {
+      "path": "docs/plans/plan-v0.2/docs/04-default-assets.md",
+      "accessCount": 1,
+      "lastAccessed": 1778575247363,
+      "type": "file"
+    },
+    {
+      "path": "docs/mvp-spec.md",
+      "accessCount": 1,
+      "lastAccessed": 1778575248458,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/assets/base.behavior-basic.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575370249,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/assets/language.typescript.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575372166,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/assets/language.java.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575373731,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/assets/framework.react.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575377598,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/assets/framework.vue.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575406051,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/assets/framework.spring-boot.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575408479,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/assets/middleware.mysql.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575410295,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/assets/middleware.redis.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575412742,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/assets/middleware.message-queue.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575414206,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/assets/practice.testing-basic.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575415513,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/assets/practice.dependency-control.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575471882,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/assets/practice.security-basic.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575473680,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/assets/practice.api-contract.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575475464,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/rules/base.behavior.clarify-before-coding.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575477428,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/rules/base.behavior.restate-goal-and-scope.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575479593,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/rules/base.behavior.minimal-change.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575481056,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/rules/base.behavior.no-unrelated-refactor.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575483092,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/rules/base.behavior.verify-behavior-change.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575485194,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/rules/base.behavior.report-validation-and-risk.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575487517,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/rules/language.typescript.no-any-without-reason.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575498231,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/rules/language.typescript.no-type-assertion-coverup.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575500149,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/rules/language.typescript.public-api-types.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575503995,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/rules/language.typescript.async-error-handling.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575504411,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/rules/language.typescript.do-not-change-tsconfig-casually.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575505627,
+      "type": "file"
+    },
+    {
+      "path": "src/built-in/rules/language.java.layering.yaml",
+      "accessCount": 1,
+      "lastAccessed": 1778575507070,
       "type": "file"
     }
   ],

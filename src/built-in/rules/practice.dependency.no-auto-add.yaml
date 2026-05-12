@@ -1,0 +1,14 @@
+id: practice.dependency.no-auto-add
+name: 不要自动新增依赖
+category: dependency
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - generic
+content:
+  zh-CN: |
+    未经确认不要新增 npm、Maven、Gradle、pip、Go module 等依赖。

@@ -13,24 +13,38 @@ BR AI Rules 帮你把一套团队 AI Coding 规则安全同步到多个 IDE 规�
 ## Quick Start
 
 ```bash
-npm install
-npm run build
-node dist/cli.js init
+pnpm install
+pnpm build
+node dist/cli.js init --stack react,typescript
 node dist/cli.js check
 ```
 
 发布后可使用：
 
 ```bash
-npx @br-ai/rules init
+npx @br-ai/rules init --stack react,typescript
 npx @br-ai/rules check
 ```
 
-`init` 默认会生成配置和规则文件。如只想生成配置：
+## Tech Stack Selection
+
+根据技术栈自动选择合适的规则资产：
 
 ```bash
-npx @br-ai/rules init --no-sync
+# React + TypeScript 项目
+br-rules init --stack react,typescript
+
+# Spring Boot + Java + MySQL + Redis 项目
+br-rules init --stack spring-boot,java,mysql,redis
+
+# Vue 项目
+br-rules init --stack vue,typescript
+
+# 默认（仅基础行为规则）
+br-rules init
 ```
+
+支持的 stack：`generic`、`typescript`、`java`、`react`、`vue`、`spring-boot`、`mysql`、`redis`、`mq`、`message-queue`
 
 ## Generated Files
 
@@ -45,11 +59,60 @@ npx @br-ai/rules init --no-sync
 ## Commands
 
 ```bash
-br-rules init
+br-rules init [--stack <stacks>] [--no-sync] [--language <lang>] [--targets <targets>]
+br-rules add <rule-id> [--category <cat>] [--severity <sev>] [--targets <targets>]
 br-rules sync
 br-rules diff
 br-rules check
-br-rules list
+br-rules list [--assets] [--custom] [--enabled] [--disabled] [--all]
+```
+
+## Built-in Assets
+
+V0.2 内置 13 个资产，覆盖 5 层：
+
+| Layer | Asset | Rules |
+|-------|-------|-------|
+| base | base.behavior-basic | 6 |
+| language | language.typescript | 5 |
+| language | language.java | 5 |
+| framework | framework.react | 5 |
+| framework | framework.vue | 5 |
+| framework | framework.spring-boot | 5 |
+| middleware | middleware.mysql | 5 |
+| middleware | middleware.redis | 5 |
+| middleware | middleware.message-queue | 5 |
+| practice | practice.testing-basic | 4 |
+| practice | practice.dependency-control | 3 |
+| practice | practice.security-basic | 4 |
+| practice | practice.api-contract | 4 |
+
+## Custom Rules
+
+在 `.ai-rules/rules/` 目录下创建 YAML 文件即可自动发现：
+
+```bash
+# 快速创建规则模板
+br-rules add team.no-auto-dependency --category dependency
+```
+
+YAML 格式：
+
+```yaml
+id: team.no-auto-dependency
+name: 禁止自动新增依赖
+category: dependency
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - generic
+content:
+  zh-CN: |
+    不允许在未明确说明原因并获得确认前新增 npm、Maven、Gradle、pip、Go module 等依赖。
 ```
 
 ## Managed Block
@@ -71,51 +134,34 @@ BR AI Rules 只更新自动生成区，不覆盖团队自定义内容：
 
 ```json
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "language": "zh-CN",
   "targets": {
     "generic": true,
     "claude": true,
-    "cursor": {
-      "enabled": true,
-      "mode": "single"
-    }
+    "cursor": { "enabled": true, "mode": "single" }
   },
-  "rulesets": ["behavior.basic"],
+  "assets": {
+    "include": [
+      "base.behavior-basic",
+      "language.typescript",
+      "framework.react",
+      "practice.testing-basic",
+      "practice.dependency-control",
+      "practice.security-basic"
+    ],
+    "exclude": []
+  },
   "disabledRules": [],
-  "customRules": [],
+  "customRules": {
+    "autoDiscover": true,
+    "paths": [".ai-rules/rules/*.yaml"]
+  },
   "writeMode": "managed-block"
 }
 ```
 
-## Custom Rules
-
-可以在项目里新增 YAML 规则：
-
-```yaml
-id: team.no-auto-dependency
-name: 禁止自动新增依赖
-category: dependency
-severity: must
-appliesTo:
-  targets:
-    - generic
-    - claude
-    - cursor
-  stacks:
-    - generic
-content:
-  zh-CN: |
-    不允许在未明确说明原因并获得确认前新增 npm、Maven、Gradle、pip、Go module 等依赖。
-```
-
-然后在 `.ai-rules/config.json` 中引用：
-
-```json
-{
-  "customRules": [".ai-rules/rules/team.no-auto-dependency.yaml"]
-}
-```
+V0.1 配置（`rulesets` 字段）自动兼容。
 
 ## Scope
 
@@ -130,13 +176,3 @@ It does not provide:
 - Web dashboard
 - Task automation
 - Enterprise RBAC
-
-BR AI Rules 只维护和安装规范规则，不维护 Skill、Agent、Runtime、OpenSpec 流程或 Web 平台。
-
-## Roadmap
-
-- More IDE targets: Codex, OpenCode, Qwen
-- More stack rules: React, Vue, Node.js, Spring Boot
-- GitHub / npm based team rule sources
-- Rule version diff and upgrade
-- Lightweight rules asset platform

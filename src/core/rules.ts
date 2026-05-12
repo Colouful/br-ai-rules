@@ -10,73 +10,12 @@ export const RuleSchema = z.object({
   metadata: z.record(z.unknown()).optional(),
   appliesTo: z.object({
     targets: z.array(z.string()).default(['generic', 'claude', 'cursor']),
-    stacks: z.array(z.string()).default(['generic'])
+    stacks: z.array(z.string()).default(['generic']),
   }).default({ targets: ['generic', 'claude', 'cursor'], stacks: ['generic'] }),
-  content: z.record(z.string().min(1), z.string().min(1))
+  content: z.record(z.string().min(1), z.string().min(1)),
 });
 
 export type Rule = z.infer<typeof RuleSchema>;
-
-export const builtInRules: Rule[] = [
-  {
-    id: 'behavior.clarify-before-coding',
-    name: '需求不清先澄清',
-    category: 'behavior',
-    severity: 'must',
-    metadata: { sourceVisibility: 'internal', inspiredBy: ['andrej-karpathy-skills'] },
-    appliesTo: { targets: ['generic', 'claude', 'cursor'], stacks: ['generic'] },
-    content: { 'zh-CN': '当需求、范围、验收标准不清楚时，先提出关键问题，不要直接修改代码。' }
-  },
-  {
-    id: 'behavior.restate-goal-and-scope',
-    name: '修改前复述目标和影响范围',
-    category: 'behavior',
-    severity: 'must',
-    metadata: { sourceVisibility: 'internal', inspiredBy: ['andrej-karpathy-skills'] },
-    appliesTo: { targets: ['generic', 'claude', 'cursor'], stacks: ['generic'] },
-    content: { 'zh-CN': '开始修改前，先简要说明你理解的目标、可能涉及的文件和不应触碰的范围。' }
-  },
-  {
-    id: 'behavior.minimal-change',
-    name: '优先最小修改',
-    category: 'behavior',
-    severity: 'must',
-    metadata: { sourceVisibility: 'internal', inspiredBy: ['andrej-karpathy-skills'] },
-    appliesTo: { targets: ['generic', 'claude', 'cursor'], stacks: ['generic'] },
-    content: { 'zh-CN': '优先做完成当前任务所需的最小修改，不扩大影响范围。' }
-  },
-  {
-    id: 'behavior.no-unrelated-refactor',
-    name: '禁止无关重构',
-    category: 'behavior',
-    severity: 'must',
-    metadata: { sourceVisibility: 'internal', inspiredBy: ['andrej-karpathy-skills'] },
-    appliesTo: { targets: ['generic', 'claude', 'cursor'], stacks: ['generic'] },
-    content: { 'zh-CN': '不要做无关重构，不要格式化无关文件，不要删除不理解的代码。' }
-  },
-  {
-    id: 'behavior.verify-behavior-change',
-    name: '行为变化必须验证',
-    category: 'behavior',
-    severity: 'must',
-    metadata: { sourceVisibility: 'internal', inspiredBy: ['mattpocock-skills'] },
-    appliesTo: { targets: ['generic', 'claude', 'cursor'], stacks: ['generic'] },
-    content: { 'zh-CN': '如果修改会影响功能行为，必须补充测试或说明可执行的手工验证方式。' }
-  },
-  {
-    id: 'behavior.report-validation-and-risk',
-    name: '完成后说明验证和风险',
-    category: 'behavior',
-    severity: 'must',
-    metadata: { sourceVisibility: 'internal', inspiredBy: ['superpowers', 'addy-osmani-agent-skills'] },
-    appliesTo: { targets: ['generic', 'claude', 'cursor'], stacks: ['generic'] },
-    content: { 'zh-CN': '最终回复必须说明修改文件、验证结果、未覆盖风险。如果没有运行验证，必须说明原因。' }
-  }
-];
-
-export const builtInRulesets: Record<string, string[]> = {
-  'behavior.basic': builtInRules.map((rule) => rule.id)
-};
 
 export async function loadCustomRule(path: string): Promise<Rule> {
   const raw = await readFile(path, 'utf8');
@@ -91,3 +30,35 @@ export function pickRuleContent(rule: Rule, language: string): string {
   }
   return preferred ?? fallback;
 }
+
+export type GroupedRules = Record<string, Rule[]>;
+
+export function groupRulesByCategory(rules: Rule[]): GroupedRules {
+  const groups: GroupedRules = {};
+  for (const rule of rules) {
+    if (!groups[rule.category]) groups[rule.category] = [];
+    groups[rule.category].push(rule);
+  }
+  for (const category of Object.keys(groups)) {
+    groups[category].sort((a, b) => {
+      const sev = (s: string) => (s === 'must' ? 0 : s === 'should' ? 1 : 2);
+      const diff = sev(a.severity) - sev(b.severity);
+      return diff !== 0 ? diff : a.id.localeCompare(b.id);
+    });
+  }
+  return groups;
+}
+
+export const categoryTitles: Record<string, string> = {
+  behavior: 'AI Coding 行为规则',
+  language: '语言编码规则',
+  frontend: '前端项目规则',
+  backend: '后端项目规则',
+  middleware: '中间件规则',
+  testing: '测试规则',
+  dependency: '依赖管理规则',
+  security: '安全规则',
+  api: 'API 契约规则',
+  review: '评审规则',
+  team: '团队自定义规则',
+};

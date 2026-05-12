@@ -1,0 +1,11 @@
+id: framework.vue
+name: Vue 项目规则
+layer: framework
+version: "0.2.0"
+description: Vue 项目的 AI Coding 规范规则
+rules:
+  - framework.vue.keep-style-consistent
+  - framework.vue.reuse-components-composables
+  - framework.vue.reactivity-boundary
+  - framework.vue.no-unnecessary-global-state
+  - framework.vue.page-verification

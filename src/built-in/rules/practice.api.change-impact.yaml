@@ -1,0 +1,14 @@
+id: practice.api.change-impact
+name: 接口变更必须说明影响范围
+category: api
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - generic
+content:
+  zh-CN: |
+    接口变更必须说明影响范围，包括调用方、文档、测试和回滚方式。

@@ -1,0 +1,14 @@
+id: framework.spring-boot.idempotency-concurrency
+name: 考虑幂等和并发
+category: backend
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - spring-boot
+content:
+  zh-CN: |
+    涉及状态变更、回调、重试、支付、库存等场景时必须考虑幂等和并发。

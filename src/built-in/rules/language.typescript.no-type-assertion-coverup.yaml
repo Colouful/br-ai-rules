@@ -1,0 +1,14 @@
+id: language.typescript.no-type-assertion-coverup
+name: 禁止用类型断言掩盖问题
+category: language
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - typescript
+content:
+  zh-CN: |
+    不要用类型断言掩盖真实类型问题。优先修正类型定义、数据结构或边界校验。

@@ -1,0 +1,14 @@
+id: language.java.money-time-state-care
+name: 金额时间状态必须谨慎
+category: language
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - java
+content:
+  zh-CN: |
+    涉及金额、时间、状态流转的逻辑必须谨慎，说明边界条件和验证方式。

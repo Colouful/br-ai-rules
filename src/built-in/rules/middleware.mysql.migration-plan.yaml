@@ -1,0 +1,14 @@
+id: middleware.mysql.migration-plan
+name: 表结构变更必须有迁移方案
+category: middleware
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - mysql
+content:
+  zh-CN: |
+    涉及表结构变更必须说明迁移方案、兼容策略和回滚方式。

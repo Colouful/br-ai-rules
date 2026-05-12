@@ -1,0 +1,14 @@
+id: framework.vue.page-verification
+name: 行为变化需要说明验证路径
+category: frontend
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - vue
+content:
+  zh-CN: |
+    行为变化需要说明页面路径、操作步骤和预期结果。

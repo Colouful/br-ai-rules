@@ -1,0 +1,14 @@
+id: framework.react.side-effects
+name: 副作用必须正确管理
+category: frontend
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - react
+content:
+  zh-CN: |
+    副作用必须放在合适位置，注意依赖数组、清理函数和重复请求问题。

@@ -1,0 +1,14 @@
+id: middleware.redis.consistency
+name: 缓存必须考虑一致性
+category: middleware
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - redis
+content:
+  zh-CN: |
+    缓存更新必须考虑一致性、失效策略和并发场景。

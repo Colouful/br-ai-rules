@@ -1,0 +1,14 @@
+id: language.typescript.async-error-handling
+name: 异步函数必须处理错误
+category: language
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - typescript
+content:
+  zh-CN: |
+    异步函数必须考虑失败路径，不要吞掉异常，不要只处理 happy path。

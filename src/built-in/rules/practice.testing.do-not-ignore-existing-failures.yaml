@@ -1,0 +1,14 @@
+id: practice.testing.do-not-ignore-existing-failures
+name: 不要跳过已有失败测试
+category: testing
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - generic
+content:
+  zh-CN: |
+    不要跳过已有失败测试。若失败与当前任务无关，也必须说明。

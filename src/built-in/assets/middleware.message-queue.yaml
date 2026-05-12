@@ -1,0 +1,11 @@
+id: middleware.message-queue
+name: 消息队列规则
+layer: middleware
+version: "0.2.0"
+description: 消息队列相关规范
+rules:
+  - middleware.message-queue.idempotent-consumer
+  - middleware.message-queue.retry-failure
+  - middleware.message-queue.compatible-payload
+  - middleware.message-queue.no-long-transaction
+  - middleware.message-queue.traceability

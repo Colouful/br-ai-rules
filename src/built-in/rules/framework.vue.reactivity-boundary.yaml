@@ -1,0 +1,14 @@
+id: framework.vue.reactivity-boundary
+name: 不要随意改变响应式结构
+category: frontend
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - vue
+content:
+  zh-CN: |
+    不要随意改变响应式数据结构，注意 ref、reactive、computed、watch 的边界。

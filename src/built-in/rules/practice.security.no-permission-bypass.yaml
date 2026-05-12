@@ -1,0 +1,14 @@
+id: practice.security.no-permission-bypass
+name: 不要绕过权限校验
+category: security
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - generic
+content:
+  zh-CN: |
+    不要绕过权限校验、认证逻辑、数据范围限制。

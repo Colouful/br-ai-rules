@@ -1,0 +1,14 @@
+id: practice.api.compatible-new-field
+name: 新增字段要考虑向后兼容
+category: api
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - generic
+content:
+  zh-CN: |
+    新增字段要考虑向后兼容，避免影响旧客户端。

@@ -1,0 +1,15 @@
+id: middleware.message-queue.compatible-payload
+name: 消息体变更要保持兼容
+category: middleware
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - mq
+    - message-queue
+content:
+  zh-CN: |
+    消息体变更要保持兼容，避免破坏已有消费者。

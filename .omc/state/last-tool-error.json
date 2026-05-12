@@ -1,7 +1,0 @@
-{
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"TMPDIR=$(mktemp -d) && echo \\\"Temp dir: $TMPDIR\\\" && cd \\\"$TMPDIR\\\" && node /Users/lizhenwei/workspace/vueworkspace/bairong/br-ai-rules/dist/cli.js init 2>&1 && echo \\\"---FILES CREATED---\\...",
-  "error": "Exit code 1\nTemp dir: /var/folders/4b/jfnwm38j143796pr23j8sdgh0000gn/T/tmp.2Gw9SEktOP\nfile:///Users/lizhenwei/workspace/vueworkspace/bairong/br-ai-rules/dist/cli.js:2\n#!/usr/bin/env node\n^\n\nSyntaxError: Invalid or unexpected token\n    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)\n    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)\n    at #translate (node:internal/modules/esm/loader:536:12)\n    at ModuleLoader.loadAndTranslate (node:internal/mod...",
-  "timestamp": "2026-05-12T08:23:52.055Z",
-  "retry_count": 1
-}

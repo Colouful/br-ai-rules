@@ -1,0 +1,14 @@
+id: framework.vue.no-unnecessary-global-state
+name: 不要引入不必要的全局状态
+category: frontend
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - vue
+content:
+  zh-CN: |
+    不要为了局部需求引入或修改全局状态。

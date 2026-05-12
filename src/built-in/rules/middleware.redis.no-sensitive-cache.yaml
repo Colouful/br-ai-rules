@@ -1,0 +1,14 @@
+id: middleware.redis.no-sensitive-cache
+name: 不要缓存敏感信息
+category: middleware
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - redis
+content:
+  zh-CN: |
+    不要缓存明文密码、token、密钥等敏感信息。

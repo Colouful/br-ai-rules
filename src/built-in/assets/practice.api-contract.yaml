@@ -1,0 +1,10 @@
+id: practice.api-contract
+name: API 契约规则
+layer: practice
+version: "0.2.0"
+description: API 接口契约相关规范
+rules:
+  - practice.api.no-breaking-change
+  - practice.api.compatible-new-field
+  - practice.api.pagination-filter-sort
+  - practice.api.change-impact

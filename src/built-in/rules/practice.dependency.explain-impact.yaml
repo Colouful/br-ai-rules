@@ -1,0 +1,14 @@
+id: practice.dependency.explain-impact
+name: 新增依赖必须说明影响
+category: dependency
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - generic
+content:
+  zh-CN: |
+    如必须新增依赖，先说明用途、替代方案、体积、安全、维护和回滚影响。

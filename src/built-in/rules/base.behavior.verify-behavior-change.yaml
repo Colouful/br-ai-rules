@@ -1,0 +1,18 @@
+id: base.behavior.verify-behavior-change
+name: 行为变化必须验证
+category: behavior
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - generic
+content:
+  zh-CN: |
+    如果修改会影响功能行为，必须补充测试或说明可执行的手工验证方式。
+metadata:
+  sourceVisibility: internal
+  inspiredBy:
+    - mattpocock-skills

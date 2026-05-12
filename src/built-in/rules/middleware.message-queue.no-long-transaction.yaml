@@ -1,0 +1,15 @@
+id: middleware.message-queue.no-long-transaction
+name: 不要在消费者中执行长事务
+category: middleware
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - mq
+    - message-queue
+content:
+  zh-CN: |
+    不要在消费者中执行不可控长事务。

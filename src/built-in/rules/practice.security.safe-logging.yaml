@@ -1,0 +1,14 @@
+id: practice.security.safe-logging
+name: 日志不要记录敏感字段
+category: security
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - generic
+content:
+  zh-CN: |
+    日志中不要记录敏感字段，错误信息不要泄露内部实现细节。

@@ -1,0 +1,14 @@
+id: middleware.mysql.update-delete-scope
+name: 更新删除必须明确范围
+category: middleware
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - mysql
+content:
+  zh-CN: |
+    更新和删除操作必须明确范围，避免误更新、误删除。

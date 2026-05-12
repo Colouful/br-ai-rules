@@ -1,0 +1,14 @@
+id: practice.api.pagination-filter-sort
+name: 分页排序过滤规则必须一致
+category: api
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - generic
+content:
+  zh-CN: |
+    分页、排序、过滤规则必须保持一致，并说明默认值。

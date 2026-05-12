@@ -1,0 +1,14 @@
+id: middleware.redis.key-ttl
+name: 必须明确 key 命名和过期时间
+category: middleware
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - redis
+content:
+  zh-CN: |
+    必须明确 key 命名、作用域和过期时间。

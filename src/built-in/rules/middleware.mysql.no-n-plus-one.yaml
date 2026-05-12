@@ -1,0 +1,14 @@
+id: middleware.mysql.no-n-plus-one
+name: 不要引入 N+1 查询
+category: middleware
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - mysql
+content:
+  zh-CN: |
+    不要在高频接口引入 N+1 查询。

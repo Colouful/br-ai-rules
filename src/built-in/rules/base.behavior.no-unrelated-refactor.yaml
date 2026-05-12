@@ -1,0 +1,18 @@
+id: base.behavior.no-unrelated-refactor
+name: 禁止无关重构
+category: behavior
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - generic
+content:
+  zh-CN: |
+    不要做无关重构，不要格式化无关文件，不要删除不理解的代码。
+metadata:
+  sourceVisibility: internal
+  inspiredBy:
+    - andrej-karpathy-skills

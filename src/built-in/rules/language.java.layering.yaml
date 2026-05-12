@@ -1,0 +1,14 @@
+id: language.java.layering
+name: 保持分层清晰
+category: language
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - java
+content:
+  zh-CN: |
+    保持 Controller / Service / Repository 或 Mapper 分层清晰，不要在 Controller 写复杂业务逻辑。

@@ -1,0 +1,11 @@
+id: middleware.mysql
+name: MySQL 规则
+layer: middleware
+version: "0.2.0"
+description: MySQL 数据库相关规范
+rules:
+  - middleware.mysql.migration-plan
+  - middleware.mysql.index-awareness
+  - middleware.mysql.no-n-plus-one
+  - middleware.mysql.pagination-order
+  - middleware.mysql.update-delete-scope

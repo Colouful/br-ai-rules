@@ -1,0 +1,12 @@
+id: base.behavior-basic
+name: 通用 AI Coding 行为规则
+layer: base
+version: "0.2.0"
+description: 所有项目通用的 AI Coding 基础行为规范
+rules:
+  - base.behavior.clarify-before-coding
+  - base.behavior.restate-goal-and-scope
+  - base.behavior.minimal-change
+  - base.behavior.no-unrelated-refactor
+  - base.behavior.verify-behavior-change
+  - base.behavior.report-validation-and-risk

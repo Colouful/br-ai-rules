@@ -1,0 +1,14 @@
+id: framework.react.state-locality
+name: 状态尽量局部化
+category: frontend
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - react
+content:
+  zh-CN: |
+    组件状态尽量局部化，避免无必要引入全局状态或复杂状态管理。

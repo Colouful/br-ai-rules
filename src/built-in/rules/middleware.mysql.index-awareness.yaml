@@ -1,0 +1,14 @@
+id: middleware.mysql.index-awareness
+name: 新查询必须考虑索引
+category: middleware
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - mysql
+content:
+  zh-CN: |
+    新增查询必须考虑索引、过滤条件和排序字段。

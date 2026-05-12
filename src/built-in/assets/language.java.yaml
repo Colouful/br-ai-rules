@@ -1,0 +1,11 @@
+id: language.java
+name: Java 编码规则
+layer: language
+version: "0.2.0"
+description: Java 项目的编码规范
+rules:
+  - language.java.layering
+  - language.java.public-signature-compatibility
+  - language.java.exception-handling
+  - language.java.money-time-state-care
+  - language.java.validation-and-permission

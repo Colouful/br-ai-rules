@@ -1,0 +1,10 @@
+id: practice.testing-basic
+name: 测试基础规则
+layer: practice
+version: "0.2.0"
+description: 测试相关的基础规范
+rules:
+  - practice.testing.behavior-change-test
+  - practice.testing.bug-regression
+  - practice.testing.no-fake-result
+  - practice.testing.do-not-ignore-existing-failures

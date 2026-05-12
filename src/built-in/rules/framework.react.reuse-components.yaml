@@ -1,0 +1,14 @@
+id: framework.react.reuse-components
+name: 优先复用现有组件
+category: frontend
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - react
+content:
+  zh-CN: |
+    优先复用项目已有组件、hooks 和样式系统，不要为了单个需求引入新 UI 库。

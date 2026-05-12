@@ -1,0 +1,11 @@
+id: framework.react
+name: React 项目规则
+layer: framework
+version: "0.2.0"
+description: React 项目的 AI Coding 规范规则
+rules:
+  - framework.react.reuse-components
+  - framework.react.state-locality
+  - framework.react.side-effects
+  - framework.react.loading-empty-error
+  - framework.react.behavior-verification

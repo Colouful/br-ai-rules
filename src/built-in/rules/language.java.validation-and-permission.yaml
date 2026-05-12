@@ -1,0 +1,14 @@
+id: language.java.validation-and-permission
+name: 不要绕过校验和权限
+category: language
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - java
+content:
+  zh-CN: |
+    不要绕过已有参数校验、权限校验和业务校验。

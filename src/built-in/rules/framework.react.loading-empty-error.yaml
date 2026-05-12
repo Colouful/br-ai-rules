@@ -1,0 +1,14 @@
+id: framework.react.loading-empty-error
+name: 必须处理加载空错误状态
+category: frontend
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - react
+content:
+  zh-CN: |
+    页面、列表、表单、弹窗必须考虑 loading、empty、error 等状态。

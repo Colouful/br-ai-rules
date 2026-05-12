@@ -1,0 +1,18 @@
+id: base.behavior.restate-goal-and-scope
+name: 修改前复述目标和影响范围
+category: behavior
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - generic
+content:
+  zh-CN: |
+    开始修改前，先简要说明你理解的目标、可能涉及的文件和不应触碰的范围。
+metadata:
+  sourceVisibility: internal
+  inspiredBy:
+    - andrej-karpathy-skills

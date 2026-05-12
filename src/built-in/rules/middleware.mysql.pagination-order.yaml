@@ -1,0 +1,14 @@
+id: middleware.mysql.pagination-order
+name: 分页查询必须稳定排序
+category: middleware
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - mysql
+content:
+  zh-CN: |
+    分页查询必须明确稳定排序，避免翻页数据漂移。

@@ -1,0 +1,14 @@
+id: language.java.public-signature-compatibility
+name: 不要破坏公共签名兼容性
+category: language
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - java
+content:
+  zh-CN: |
+    不要随意改变公共方法、接口、DTO 字段含义，避免破坏兼容性。

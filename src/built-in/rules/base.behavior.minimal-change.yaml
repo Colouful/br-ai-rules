@@ -1,0 +1,18 @@
+id: base.behavior.minimal-change
+name: 优先最小修改
+category: behavior
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - generic
+content:
+  zh-CN: |
+    优先做完成当前任务所需的最小修改，不扩大影响范围。
+metadata:
+  sourceVisibility: internal
+  inspiredBy:
+    - andrej-karpathy-skills

@@ -1,0 +1,10 @@
+id: practice.security-basic
+name: 安全基础规则
+layer: practice
+version: "0.2.0"
+description: 安全相关的基础规范
+rules:
+  - practice.security.no-secret-output
+  - practice.security.no-permission-bypass
+  - practice.security.validate-user-input
+  - practice.security.safe-logging

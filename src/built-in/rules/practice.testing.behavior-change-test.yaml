@@ -1,0 +1,14 @@
+id: practice.testing.behavior-change-test
+name: 行为变化必须补充测试
+category: testing
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - generic
+content:
+  zh-CN: |
+    行为变化必须补充自动化测试，或说明无法自动化时的手工验证步骤。

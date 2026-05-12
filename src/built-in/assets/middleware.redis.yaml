@@ -1,0 +1,11 @@
+id: middleware.redis
+name: Redis 规则
+layer: middleware
+version: "0.2.0"
+description: Redis 缓存相关规范
+rules:
+  - middleware.redis.key-ttl
+  - middleware.redis.no-sensitive-cache
+  - middleware.redis.consistency
+  - middleware.redis.lock-ttl
+  - middleware.redis.not-transaction-replacement

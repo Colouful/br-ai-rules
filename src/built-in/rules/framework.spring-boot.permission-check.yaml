@@ -1,0 +1,14 @@
+id: framework.spring-boot.permission-check
+name: 必须确认鉴权点
+category: backend
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - spring-boot
+content:
+  zh-CN: |
+    涉及用户、角色、组织、数据范围时必须确认鉴权点。

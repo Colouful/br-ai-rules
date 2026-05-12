@@ -1,0 +1,14 @@
+id: middleware.redis.not-transaction-replacement
+name: 不要用 Redis 替代数据库事务
+category: middleware
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - redis
+content:
+  zh-CN: |
+    不要用 Redis 替代数据库事务。

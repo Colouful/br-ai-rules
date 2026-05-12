@@ -1,0 +1,19 @@
+id: base.behavior.report-validation-and-risk
+name: 完成后说明验证和风险
+category: behavior
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - generic
+content:
+  zh-CN: |
+    最终回复必须说明修改文件、验证结果、未覆盖风险。如果没有运行验证，必须说明原因。
+metadata:
+  sourceVisibility: internal
+  inspiredBy:
+    - superpowers
+    - addy-osmani-agent-skills

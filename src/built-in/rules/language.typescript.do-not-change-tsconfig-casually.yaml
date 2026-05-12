@@ -1,0 +1,14 @@
+id: language.typescript.do-not-change-tsconfig-casually
+name: 不要随意修改 tsconfig
+category: language
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - typescript
+content:
+  zh-CN: |
+    不要为了当前任务随意修改 `tsconfig`、构建配置或 lint 配置。

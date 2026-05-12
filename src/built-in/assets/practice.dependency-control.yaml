@@ -1,0 +1,9 @@
+id: practice.dependency-control
+name: 依赖管理规则
+layer: practice
+version: "0.2.0"
+description: 依赖管理相关规范
+rules:
+  - practice.dependency.no-auto-add
+  - practice.dependency.explain-impact
+  - practice.dependency.prefer-existing

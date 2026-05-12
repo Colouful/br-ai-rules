@@ -1,0 +1,15 @@
+id: middleware.message-queue.retry-failure
+name: 必须考虑消费失败机制
+category: middleware
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - mq
+    - message-queue
+content:
+  zh-CN: |
+    必须考虑消费失败、重试、死信或补偿机制。

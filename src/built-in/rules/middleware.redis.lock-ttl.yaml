@@ -1,0 +1,14 @@
+id: middleware.redis.lock-ttl
+name: 分布式锁必须设置过期时间
+category: middleware
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - redis
+content:
+  zh-CN: |
+    分布式锁必须设置过期时间，并考虑释放失败和锁误删问题。

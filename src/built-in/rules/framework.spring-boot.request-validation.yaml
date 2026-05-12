@@ -1,0 +1,14 @@
+id: framework.spring-boot.request-validation
+name: 接口入参必须校验
+category: backend
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - spring-boot
+content:
+  zh-CN: |
+    接口入参必须校验，并遵循项目现有错误返回规范。

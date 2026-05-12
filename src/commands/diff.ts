@@ -6,8 +6,8 @@ import { renderFiles, resolveRules } from '../core/render.js';
 
 export async function diffCommand(root = process.cwd()): Promise<void> {
   const config = await loadConfig(root);
-  const rules = await resolveRules(root, config);
-  const files = renderFiles(config, rules);
+  const ctx = await resolveRules(root, config);
+  const files = renderFiles(config, ctx);
   let changed = false;
   for (const file of files) {
     const target = join(root, file.path);

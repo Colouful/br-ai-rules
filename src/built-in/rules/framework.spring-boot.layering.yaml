@@ -1,0 +1,14 @@
+id: framework.spring-boot.layering
+name: 遵循分层架构
+category: backend
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - spring-boot
+content:
+  zh-CN: |
+    遵循 Controller / Service / Mapper 或 Repository 分层，不要跨层写逻辑。

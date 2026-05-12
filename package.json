@@ -1,6 +1,6 @@
 {
   "name": "@br-ai/rules",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A lightweight AI Coding rules installer for teams.",
   "type": "module",
   "bin": {
@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "dev": "tsx src/cli.ts",
-    "build": "tsup",
+    "build": "tsup && rm -rf dist/built-in && cp -r src/built-in dist/built-in",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },

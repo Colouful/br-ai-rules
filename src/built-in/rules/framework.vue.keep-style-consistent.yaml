@@ -1,0 +1,14 @@
+id: framework.vue.keep-style-consistent
+name: 保持 API 风格一致
+category: frontend
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - vue
+content:
+  zh-CN: |
+    遵循项目现有 Composition API 或 Options API 风格，不要混用不一致写法。

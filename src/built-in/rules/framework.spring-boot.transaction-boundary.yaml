@@ -1,0 +1,14 @@
+id: framework.spring-boot.transaction-boundary
+name: 注意事务边界
+category: backend
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - spring-boot
+content:
+  zh-CN: |
+    涉及数据库写入、状态变更、多表操作时必须考虑事务边界。

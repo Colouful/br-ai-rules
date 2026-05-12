@@ -1,0 +1,11 @@
+id: language.typescript
+name: TypeScript 编码规则
+layer: language
+version: "0.2.0"
+description: TypeScript 项目的编码规范
+rules:
+  - language.typescript.no-any-without-reason
+  - language.typescript.no-type-assertion-coverup
+  - language.typescript.public-api-types
+  - language.typescript.async-error-handling
+  - language.typescript.do-not-change-tsconfig-casually

@@ -1,0 +1,15 @@
+id: middleware.message-queue.idempotent-consumer
+name: 消费者必须幂等
+category: middleware
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - mq
+    - message-queue
+content:
+  zh-CN: |
+    消费者必须考虑重复消费，关键操作要具备幂等性。

@@ -1,0 +1,14 @@
+id: practice.dependency.prefer-existing
+name: 优先使用项目已有工具库
+category: dependency
+severity: should
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - generic
+content:
+  zh-CN: |
+    优先使用项目已有工具库和已有实现，不要为小功能引入大型库。

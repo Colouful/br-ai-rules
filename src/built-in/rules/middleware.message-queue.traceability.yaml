@@ -1,0 +1,15 @@
+id: middleware.message-queue.traceability
+name: 关键消息必须可追踪
+category: middleware
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - mq
+    - message-queue
+content:
+  zh-CN: |
+    关键业务消息必须有日志和可追踪 ID。

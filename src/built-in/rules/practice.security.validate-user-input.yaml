@@ -1,0 +1,14 @@
+id: practice.security.validate-user-input
+name: 用户输入必须校验
+category: security
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - generic
+content:
+  zh-CN: |
+    用户输入必须校验，涉及上传、下载、回调、支付等场景要特别说明风险。

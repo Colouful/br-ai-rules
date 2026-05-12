@@ -1,0 +1,11 @@
+id: framework.spring-boot
+name: Spring Boot 项目规则
+layer: framework
+version: "0.2.0"
+description: Spring Boot 项目的 AI Coding 规范规则
+rules:
+  - framework.spring-boot.layering
+  - framework.spring-boot.request-validation
+  - framework.spring-boot.transaction-boundary
+  - framework.spring-boot.permission-check
+  - framework.spring-boot.idempotency-concurrency

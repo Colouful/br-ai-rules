@@ -1,0 +1,14 @@
+id: language.typescript.no-any-without-reason
+name: 禁止无理由使用 any
+category: language
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - typescript
+content:
+  zh-CN: |
+    禁止为了快速通过类型检查而随意使用 `any`。如果必须使用，说明原因和后续收敛方式。

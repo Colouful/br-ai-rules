@@ -1,0 +1,14 @@
+id: framework.vue.reuse-components-composables
+name: 优先复用已有组件和 composables
+category: frontend
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - vue
+content:
+  zh-CN: |
+    优先复用已有组件、composables 和样式系统。

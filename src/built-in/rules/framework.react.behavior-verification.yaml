@@ -1,0 +1,14 @@
+id: framework.react.behavior-verification
+name: 交互变化必须验证
+category: frontend
+severity: must
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - react
+content:
+  zh-CN: |
+    涉及交互行为变化时，补充组件测试或说明手工验证路径。
