@@ -1,5 +1,7 @@
 # BR AI Rules
 
+> Current beta: `0.2.1-beta.1`
+
 A lightweight AI Coding rules installer for teams.
 
 BR AI Rules 是一个面向团队的 AI Coding 规范规则安装器，用一套规则源生成 `AGENTS.md`、`CLAUDE.md` 和 Cursor Rules。
