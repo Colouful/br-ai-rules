@@ -1,18 +1,10 @@
-import { defineConfig } from 'tsup';
+import { defineConfig } from 'vitest/config';
 import { readFileSync } from 'node:fs';
 
 const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
 
 export default defineConfig({
-  entry: ['src/cli.ts'],
-  format: ['esm'],
-  dts: false,
-  clean: true,
-  outDir: 'dist',
   define: {
     __PKG_VERSION__: JSON.stringify(pkg.version),
-  },
-  banner: {
-    js: '#!/usr/bin/env node',
   },
 });

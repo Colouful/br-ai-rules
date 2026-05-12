@@ -105,9 +105,15 @@ export async function loadCustomRules(paths: string[], root: string): Promise<Ru
       continue;
     }
     for (const file of files) {
-      const raw = await readFile(join(resolvedDir, file), 'utf8');
+      const filePath = join(resolvedDir, file);
+      const raw = await readFile(filePath, 'utf8');
       try {
-        rules.push({ ...RuleSchema.parse(YAML.parse(raw)), metadata: { ...RuleSchema.parse(YAML.parse(raw)).metadata, source: 'custom' } });
+        const parsed = RuleSchema.parse(YAML.parse(raw));
+        const contentValues = Object.values(parsed.content).join('\n');
+        if (/TODO|在这里写规则内容/.test(contentValues)) {
+          console.warn(`Warning: Custom rule ${join(dir, file)} still contains placeholder content (TODO).`);
+        }
+        rules.push({ ...parsed, metadata: { ...parsed.metadata, source: 'custom' } });
       } catch (e) {
         console.warn(`Warning: Failed to parse custom rule ${join(dir, file)}: ${e instanceof Error ? e.message : e}`);
       }

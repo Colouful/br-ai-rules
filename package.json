@@ -1,6 +1,6 @@
 {
   "name": "@br-ai/rules",
-  "version": "0.2.1-beta.1",
+  "version": "0.2.2-beta.1",
   "description": "A lightweight AI Coding rules installer for teams.",
   "type": "module",
   "bin": {

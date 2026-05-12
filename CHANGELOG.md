@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.2.2-beta.1
+
+### Fixed
+
+- `init` now generates config with version from `package.json` instead of hardcoded `0.2.0`.
+- `sync` warns when custom rules still contain TODO placeholder content.
+
+### Added
+
+- Unit test: config version matches package.json version.
+- Unit test: custom rule TODO placeholder detection.
+
 ## 0.2.1-beta.1
 
 ### Added

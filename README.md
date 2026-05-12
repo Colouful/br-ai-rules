@@ -1,6 +1,6 @@
 # BR AI Rules
 
-> Current beta: `0.2.1-beta.1`
+> Current beta: `0.2.2-beta.1`
 
 A lightweight AI Coding rules installer for teams.
 

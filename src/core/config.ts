@@ -2,6 +2,9 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { z } from 'zod';
 
+declare const __PKG_VERSION__: string;
+const PKG_VERSION: string = typeof __PKG_VERSION__ !== 'undefined' ? __PKG_VERSION__ : '0.0.0-dev';
+
 export const CONFIG_PATH = '.ai-rules/config.json';
 export const GENERATED_PATH = '.ai-rules/generated.json';
 
@@ -56,7 +59,7 @@ export function normalizeConfig(raw: Record<string, unknown>): RulesConfig {
 
 export function defaultConfig(overrides: Partial<RulesConfig> = {}): RulesConfig {
   return ConfigSchema.parse({
-    version: '0.2.0',
+    version: PKG_VERSION,
     language: 'zh-CN',
     targets: { generic: true, claude: true, cursor: { enabled: true, mode: 'single' } },
     assets: { include: ['base.behavior-basic'], exclude: [] },
