@@ -1,0 +1,33 @@
+{
+  "name": "@br-ai/rules",
+  "version": "0.1.0",
+  "description": "A lightweight AI Coding rules installer for teams.",
+  "type": "module",
+  "bin": {
+    "br-rules": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "tsx src/cli.ts",
+    "build": "tsup src/cli.ts --format esm --dts false --clean --out-dir dist --banner.js '#!/usr/bin/env node'",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": ["ai-coding", "rules", "cursor", "claude", "agents"],
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^12.1.0",
+    "yaml": "^2.6.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "tsx": "^4.19.1",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.3"
+  }
+}

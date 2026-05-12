@@ -1,0 +1,16 @@
+{
+  "version": "0.1.0",
+  "language": "zh-CN",
+  "targets": {
+    "generic": true,
+    "claude": true,
+    "cursor": {
+      "enabled": true,
+      "mode": "single"
+    }
+  },
+  "rulesets": ["behavior.basic"],
+  "disabledRules": [],
+  "customRules": [],
+  "writeMode": "managed-block"
+}
