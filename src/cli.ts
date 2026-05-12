@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 import { Command } from 'commander';
 import { initCommand } from './commands/init.js';
 import { syncCommand } from './commands/sync.js';
@@ -16,7 +15,7 @@ program
 program
   .command('init')
   .description('Initialize BR AI Rules config and generate rule files')
-  .option('--no-sync', 'Only create .ai-rules/config.json')
+  .option('--no-sync', 'Only create .ai-rules/config.json without syncing')
   .option('--language <language>', 'Rule language, default zh-CN')
   .option('--targets <targets>', 'Comma-separated targets: generic,claude,cursor')
   .option('--rulesets <rulesets>', 'Comma-separated rulesets')

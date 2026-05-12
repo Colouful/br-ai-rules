@@ -1,7 +1,7 @@
 import { defaultConfig, writeConfig } from '../core/config.js';
 import { syncCommand } from './sync.js';
 
-export async function initCommand(options: { noSync?: boolean; language?: string; targets?: string; rulesets?: string }, root = process.cwd()): Promise<void> {
+export async function initCommand(options: { sync?: boolean; language?: string; targets?: string; rulesets?: string }, root = process.cwd()): Promise<void> {
   const config = defaultConfig();
   if (options.language) config.language = options.language;
   if (options.rulesets) config.rulesets = options.rulesets.split(',').map((item) => item.trim()).filter(Boolean);
@@ -13,5 +13,5 @@ export async function initCommand(options: { noSync?: boolean; language?: string
   }
   await writeConfig(root, config);
   console.log('Created .ai-rules/config.json');
-  if (!options.noSync) await syncCommand(root);
+  if (options.sync !== false) await syncCommand(root);
 }
