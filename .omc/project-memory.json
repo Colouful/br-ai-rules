@@ -114,9 +114,21 @@
       "type": "file"
     },
     {
+      "path": "src/core/managed-block.ts",
+      "accessCount": 4,
+      "lastAccessed": 1778579314583,
+      "type": "file"
+    },
+    {
       "path": "src/core/config.ts",
-      "accessCount": 3,
-      "lastAccessed": 1778575877111,
+      "accessCount": 4,
+      "lastAccessed": 1778580763816,
+      "type": "file"
+    },
+    {
+      "path": "src/commands/sync.ts",
+      "accessCount": 4,
+      "lastAccessed": 1778580883975,
       "type": "file"
     },
     {
@@ -127,14 +139,20 @@
     },
     {
       "path": "src/core/rules.ts",
-      "accessCount": 2,
-      "lastAccessed": 1778575930756,
+      "accessCount": 3,
+      "lastAccessed": 1778580786462,
       "type": "file"
     },
     {
       "path": "src/core/render.ts",
-      "accessCount": 2,
-      "lastAccessed": 1778575953344,
+      "accessCount": 3,
+      "lastAccessed": 1778580857297,
+      "type": "file"
+    },
+    {
+      "path": "src/core/generated.ts",
+      "accessCount": 3,
+      "lastAccessed": 1778580867726,
       "type": "file"
     },
     {
@@ -156,12 +174,6 @@
       "type": "file"
     },
     {
-      "path": "src/commands/sync.ts",
-      "accessCount": 2,
-      "lastAccessed": 1778576018938,
-      "type": "file"
-    },
-    {
       "path": "src/commands/diff.ts",
       "accessCount": 2,
       "lastAccessed": 1778576022299,
@@ -180,21 +192,9 @@
       "type": "file"
     },
     {
-      "path": "src/core/generated.ts",
-      "accessCount": 2,
-      "lastAccessed": 1778576058009,
-      "type": "file"
-    },
-    {
       "path": "README.md",
       "accessCount": 2,
       "lastAccessed": 1778577003472,
-      "type": "file"
-    },
-    {
-      "path": "src/core/managed-block.ts",
-      "accessCount": 1,
-      "lastAccessed": 1778574076017,
       "type": "file"
     },
     {

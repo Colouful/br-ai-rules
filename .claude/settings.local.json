@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p /Users/lizhenwei/Downloads/00download/新需求/test-ai-rules)",
+      "Bash(rm -rf /Users/lizhenwei/Downloads/00download/新需求/test-ai-rules/*)",
+      "Read(//Users/lizhenwei/Downloads/00download/新需求/test-ai-rules/**)"
+    ]
+  }
+}
