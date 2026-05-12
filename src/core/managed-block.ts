@@ -17,8 +17,8 @@ export function upsertManagedBlock(existing: string | null, generatedContent: st
 
   if (start >= 0 && end >= 0 && end > start) {
     const before = existing.slice(0, start);
-    const after = existing.slice(end + END_MARKER.length);
-    return `${before}${block}${after.startsWith('\n') ? after : `\n${after}`}`;
+    const after = existing.slice(end + END_MARKER.length).replace(/^\n+/, '');
+    return after ? `${before}${block}${after}` : `${before}${block}`;
   }
 
   const separator = existing.endsWith('\n') ? '\n' : '\n\n';
