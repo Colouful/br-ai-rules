@@ -1,6 +1,6 @@
 # BR AI Rules
 
-> Current beta: `0.3.0-beta.1`
+> Current beta: `0.4.0-beta.1`
 
 A lightweight AI Coding rules installer for teams.
 
@@ -26,6 +26,27 @@ node dist/cli.js check
 ```bash
 npx @br-ai/rules init --stack react,typescript
 npx @br-ai/rules check
+```
+
+### V0.4 — 本地团队规则源（创建 / 校验 / 诊断）
+
+`br-rules source init` 会在指定目录生成可纳入版本库的**轻量**团队规则源（默认资产为 `team.starter-pack` 与示例规则 `team.code-review-required`，不生成 frontend/backend 两套资产模板）：
+
+```bash
+node dist/cli.js source init ./team-rules-source
+node dist/cli.js source check ./team-rules-source
+```
+
+将本地源接入项目并生成 IDE 规则文件：
+
+```bash
+node dist/cli.js init --source ./team-rules-source --asset team.starter-pack
+```
+
+在项目根检查配置中的全部 `sources` 与生成物是否一致：
+
+```bash
+node dist/cli.js doctor
 ```
 
 ## Tech Stack Selection
@@ -141,7 +162,7 @@ BR AI Rules 只更新自动生成区，不覆盖团队自定义内容：
 
 ```json
 {
-  "version": "0.3.0-beta.1",
+  "version": "0.4.0-beta.1",
   "language": "zh-CN",
   "targets": {
     "generic": true,

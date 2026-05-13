@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.4.0-beta.1
+
+### Added
+
+- `br-rules source init`：在目录中生成 `br-rules.source.json`、`assets/team.starter-pack.yaml`、`rules/team.code-review-required.yaml`（默认轻量 starter-pack，非 frontend/backend 双资产模板）。
+- `br-rules source check [path]`：校验 manifest、YAML、资产引用的规则是否存在、重复 ID、占位符与 manifest 列表一致性。
+- `br-rules doctor`：检查配置可读性、来源可审计、规则合并、生成目标文件是否存在、托管块是否与当前配置同步、`.ai-rules/generated.json` 是否存在。
+
+### Changed
+
+- 发布版本号对齐 V0.4 beta；README 补充 V0.4 Quick Start 与本地源说明。
+
 ## 0.3.0-beta.1
 
 ### Added
