@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach, afterEach } from 'vitest';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, readFile, rm, writeFile, access } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { auditSourcePath, collectPlaceholderWarningsForRules } from '../src/core/source.js';
@@ -71,6 +71,20 @@ describe('sourceInitCommand', () => {
     await sourceInitCommand({}, 'x', tmpDir);
     expect(process.exitCode).toBe(1);
     process.exitCode = prev;
+  });
+
+  it('writes absolute target path (not <root>/tmp/...)', async () => {
+    const stamp = Date.now();
+    const abs = `/tmp/br-rules-abs-init-${stamp}`;
+    await rm(abs, { recursive: true, force: true });
+    await sourceInitCommand({}, abs, tmpDir);
+    const manifest = JSON.parse(await readFile(join(abs, 'br-rules.source.json'), 'utf8'));
+    expect(manifest.name).toBe('team-rules');
+    const legacyWrong = join(tmpDir, 'tmp', `br-rules-abs-init-${stamp}`);
+    await expect(access(join(legacyWrong, 'br-rules.source.json')).then(() => true).catch(() => false)).resolves.toBe(
+      false,
+    );
+    await rm(abs, { recursive: true, force: true });
   });
 });
 

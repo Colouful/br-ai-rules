@@ -1,5 +1,5 @@
 import { mkdir, writeFile, access } from 'node:fs/promises';
-import { join } from 'node:path';
+import { isAbsolute, join } from 'node:path';
 
 const DEFAULT_DIR = 'team-rules-source';
 
@@ -41,7 +41,8 @@ export async function sourceInitCommand(
   root = process.cwd(),
 ): Promise<void> {
   const name = (directoryArg?.trim() || DEFAULT_DIR).replace(/\/$/, '');
-  const out = join(root, name);
+  // join(root, '/tmp/x') incorrectly becomes '<root>/tmp/x' on Node; honor absolute paths.
+  const out = isAbsolute(name) ? name : join(root, name);
 
   await mkdir(join(out, 'assets'), { recursive: true });
   await mkdir(join(out, 'rules'), { recursive: true });
