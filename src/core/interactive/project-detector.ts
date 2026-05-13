@@ -45,7 +45,7 @@ export async function detectProject(root: string): Promise<ProjectDetectionResul
 }
 
 async function detectNodeProject(root: string, state: DetectionState): Promise<void> {
-  const packageJson = await readOptionalFile(join(root, 'package.json'));
+  const packageJson = await readOptionalFile(join(root, 'package.json'), 'package.json', state);
   if (packageJson) {
     let parsed: unknown;
     try {
@@ -89,13 +89,13 @@ async function detectNodeProject(root: string, state: DetectionState): Promise<v
     }
   }
 
-  if (await fileExists(join(root, 'tsconfig.json'))) {
+  if (await fileExists(join(root, 'tsconfig.json'), 'tsconfig.json', state)) {
     addTypeScript(state, '检测到 tsconfig.json，作为 TypeScript 辅助证据。');
   }
 }
 
 async function detectJavaProject(root: string, state: DetectionState): Promise<void> {
-  const buildFiles = await readBuildFiles(root);
+  const buildFiles = await readBuildFiles(root, state);
   if (buildFiles.length === 0) return;
 
   const content = buildFiles.map((file) => file.content).join('\n').toLowerCase();
@@ -117,11 +117,11 @@ async function detectJavaProject(root: string, state: DetectionState): Promise<v
   state.assetIds.add('practice.api-contract');
 }
 
-async function readBuildFiles(root: string): Promise<Array<{ name: string; content: string }>> {
+async function readBuildFiles(root: string, state: DetectionState): Promise<Array<{ name: string; content: string }>> {
   const files = ['pom.xml', 'build.gradle', 'build.gradle.kts'];
   const found: Array<{ name: string; content: string }> = [];
   for (const file of files) {
-    const content = await readOptionalFile(join(root, file));
+    const content = await readOptionalFile(join(root, file), file, state);
     if (content) found.push({ name: file, content });
   }
   return found;
@@ -156,21 +156,44 @@ function containsAny(value: string, candidates: string[]): boolean {
   return candidates.some((candidate) => value.includes(candidate));
 }
 
-async function readOptionalFile(path: string): Promise<string | null> {
+async function readOptionalFile(path: string, label: string, state: DetectionState): Promise<string | null> {
   try {
     return await readFile(path, 'utf8');
-  } catch {
+  } catch (error) {
+    if (isMissingFileError(error)) {
+      return null;
+    }
+    state.evidence.push(`无法读取 ${label}：${formatFileError(error)}，已跳过该文件识别。`);
     return null;
   }
 }
 
-async function fileExists(path: string): Promise<boolean> {
+async function fileExists(path: string, label: string, state: DetectionState): Promise<boolean> {
   try {
     await access(path);
     return true;
-  } catch {
+  } catch (error) {
+    if (isMissingFileError(error)) {
+      return false;
+    }
+    state.evidence.push(`无法访问 ${label}：${formatFileError(error)}，已跳过该文件识别。`);
     return false;
   }
+}
+
+function isMissingFileError(error: unknown): boolean {
+  return isNodeFileError(error) && (error.code === 'ENOENT' || error.code === 'ENOTDIR');
+}
+
+function formatFileError(error: unknown): string {
+  if (isNodeFileError(error)) {
+    return error.code ? `${error.code} ${error.message}` : error.message;
+  }
+  return String(error);
+}
+
+function isNodeFileError(error: unknown): error is NodeJS.ErrnoException {
+  return error instanceof Error;
 }
 
 type PackageJsonLike = {
