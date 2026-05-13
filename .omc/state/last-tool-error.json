@@ -1,7 +1,0 @@
-{
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"TEST_DIR=\\\"/tmp/br-ai-rules-v03-test\\\" && cd \\\"$TEST_DIR\\\" && node /Users/lizhenwei/workspace/vueworkspace/bairong/br-ai-rules/dist/cli.js check 2>&1\",\"description\":\"Local acceptance: chec...",
-  "error": "Exit code 1\n✗ Unknown asset in config: team.backend-standard",
-  "timestamp": "2026-05-13T02:46:36.127Z",
-  "retry_count": 1
-}
