@@ -103,8 +103,20 @@
   "hotPaths": [
     {
       "path": "package.json",
-      "accessCount": 9,
-      "lastAccessed": 1778586860567,
+      "accessCount": 10,
+      "lastAccessed": 1778590758293,
+      "type": "file"
+    },
+    {
+      "path": "src/core/config.ts",
+      "accessCount": 10,
+      "lastAccessed": 1778590908160,
+      "type": "file"
+    },
+    {
+      "path": "README.md",
+      "accessCount": 5,
+      "lastAccessed": 1778590799683,
       "type": "file"
     },
     {
@@ -120,12 +132,6 @@
       "type": "file"
     },
     {
-      "path": "src/core/config.ts",
-      "accessCount": 4,
-      "lastAccessed": 1778580763816,
-      "type": "file"
-    },
-    {
       "path": "src/commands/sync.ts",
       "accessCount": 4,
       "lastAccessed": 1778580883975,
@@ -135,12 +141,6 @@
       "path": "src/commands/init.ts",
       "accessCount": 4,
       "lastAccessed": 1778586792325,
-      "type": "file"
-    },
-    {
-      "path": "README.md",
-      "accessCount": 4,
-      "lastAccessed": 1778586908264,
       "type": "file"
     },
     {
@@ -159,6 +159,18 @@
       "path": "src/core/generated.ts",
       "accessCount": 3,
       "lastAccessed": 1778580867726,
+      "type": "file"
+    },
+    {
+      "path": "src/commands/check.ts",
+      "accessCount": 3,
+      "lastAccessed": 1778590658812,
+      "type": "file"
+    },
+    {
+      "path": "tsup.config.ts",
+      "accessCount": 3,
+      "lastAccessed": 1778590897526,
       "type": "file"
     },
     {
@@ -186,12 +198,6 @@
       "type": "file"
     },
     {
-      "path": "src/commands/check.ts",
-      "accessCount": 2,
-      "lastAccessed": 1778576040153,
-      "type": "file"
-    },
-    {
       "path": "src/commands/list.ts",
       "accessCount": 2,
       "lastAccessed": 1778576053219,
@@ -207,12 +213,6 @@
       "path": "tsconfig.json",
       "accessCount": 1,
       "lastAccessed": 1778574079599,
-      "type": "file"
-    },
-    {
-      "path": "tsup.config.ts",
-      "accessCount": 1,
-      "lastAccessed": 1778574123436,
       "type": "file"
     },
     {
