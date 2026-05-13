@@ -1,0 +1,11 @@
+id: team.no-raw-exception
+name: 禁止直接抛出 RuntimeException
+category: backend
+severity: must
+appliesTo:
+  targets: [generic, claude, cursor]
+  stacks: [spring-boot, java]
+content:
+  zh-CN: |
+    不要在业务代码中直接抛出 RuntimeException。
+    应优先使用项目已有的业务异常类型、错误码体系或统一返回结构。

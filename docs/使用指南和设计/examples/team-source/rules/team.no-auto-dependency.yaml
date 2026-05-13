@@ -1,0 +1,10 @@
+id: team.no-auto-dependency
+name: 禁止未经确认新增依赖
+category: dependency
+severity: must
+appliesTo:
+  targets: [generic, claude, cursor]
+  stacks: [generic]
+content:
+  zh-CN: |
+    不允许在未明确说明原因并获得确认前新增 npm、Maven、Gradle、pip、Go module 等依赖。

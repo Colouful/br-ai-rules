@@ -1,0 +1,39 @@
+{
+  "version": "0.3.0-beta.1",
+  "language": "zh-CN",
+  "targets": {
+    "generic": true,
+    "claude": true,
+    "cursor": {
+      "enabled": true,
+      "mode": "single"
+    }
+  },
+  "sources": [
+    {
+      "type": "local",
+      "path": "/path/to/team-source"
+    }
+  ],
+  "assets": {
+    "include": [
+      "base.behavior-basic",
+      "language.java",
+      "framework.spring-boot",
+      "middleware.mysql",
+      "middleware.redis",
+      "practice.api-contract",
+      "practice.testing-basic",
+      "practice.security-basic",
+      "team.backend-standard"
+    ],
+    "exclude": []
+  },
+  "customRules": {
+    "autoDiscover": true,
+    "paths": [
+      ".ai-rules/rules/*.yaml"
+    ]
+  },
+  "writeMode": "managed-block"
+}

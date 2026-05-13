@@ -1,0 +1,56 @@
+{
+  "version": "0.3.0-beta.1",
+  "generatedAt": "2026-05-13T00:00:00.000Z",
+  "language": "zh-CN",
+  "sources": [
+    {
+      "type": "local",
+      "path": "/path/to/team-source",
+      "name": "team-ai-rules",
+      "version": "0.1.0",
+      "checksum": "example-checksum"
+    }
+  ],
+  "assets": [
+    {
+      "id": "team.backend-standard",
+      "source": "local:/path/to/team-source",
+      "version": "0.1.0",
+      "checksum": "example-checksum"
+    }
+  ],
+  "rules": [
+    {
+      "id": "team.no-raw-exception",
+      "source": "local:/path/to/team-source",
+      "path": "/path/to/team-source/rules/team.no-raw-exception.yaml",
+      "checksum": "example-checksum"
+    },
+    {
+      "id": "team.auth-change-check",
+      "source": "local:/path/to/team-source",
+      "path": "/path/to/team-source/rules/team.auth-change-check.yaml",
+      "checksum": "example-checksum"
+    },
+    {
+      "id": "team.api-language",
+      "source": "local:/path/to/team-source",
+      "path": "/path/to/team-source/rules/team.api-language.yaml",
+      "checksum": "example-checksum"
+    }
+  ],
+  "targets": {
+    "generic": {
+      "file": "AGENTS.md",
+      "checksum": "example-checksum"
+    },
+    "claude": {
+      "file": "CLAUDE.md",
+      "checksum": "example-checksum"
+    },
+    "cursor": {
+      "file": ".cursor/rules/ai-coding.mdc",
+      "checksum": "example-checksum"
+    }
+  }
+}
