@@ -1,0 +1,1 @@
+验收标准: 1. 新团队可 init 2. source check 3. doctor 可诊断 4. 默认规则更简洁 5. README 快速理解价值 6. 本地闭环 7. 不破坏 V0.3 能力

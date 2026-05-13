@@ -1,0 +1,1 @@
+source check: 校验 source manifest、assets、rules、重复 id、TODO 占位

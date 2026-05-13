@@ -1,0 +1,1 @@
+测试命令清单: init / sync / check / diff / source list / asset list / add / doctor

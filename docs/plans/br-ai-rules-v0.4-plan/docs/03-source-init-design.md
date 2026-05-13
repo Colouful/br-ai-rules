@@ -1,0 +1,1 @@
+source init: 创建标准 team-source 目录，生成示例 assets/rules

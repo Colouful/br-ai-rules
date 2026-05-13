@@ -66,7 +66,12 @@ br-rules add <rule-id> [--category <cat>] [--severity <sev>] [--targets <targets
 br-rules sync
 br-rules diff
 br-rules check
+br-rules doctor
 br-rules list [--assets] [--custom] [--enabled] [--disabled] [--all]
+br-rules source list
+br-rules source init [directory] [--force]
+br-rules source check [path]
+br-rules asset list
 ```
 
 ## Built-in Assets

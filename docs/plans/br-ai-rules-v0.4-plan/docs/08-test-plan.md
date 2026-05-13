@@ -1,0 +1,1 @@
+全量回归测试: V0.2/V0.3 功能不回归, source init/check/doctor 全量测试

@@ -1,0 +1,1 @@
+命令设计: init / check / doctor / list / asset list
