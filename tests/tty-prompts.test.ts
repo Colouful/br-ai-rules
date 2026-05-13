@@ -109,15 +109,78 @@ describe('tty prompts', () => {
 
     await expect(resultPromise).resolves.toBe('./team-rules');
   });
+
+  it('rejects promptText on Ctrl+C without hanging', async () => {
+    const { input, output } = createHarness();
+    const resultPromise = promptText({
+      message: '输入路径',
+      input,
+      output,
+    });
+
+    input.write('\u0003');
+
+    await expect(resultPromise).rejects.toThrow('用户取消');
+  });
+
+  it('rejects single-select on input end and removes keypress listener', async () => {
+    const { input, output } = createHarness();
+    const resultPromise = promptSingleSelect({
+      message: '选择语言',
+      options: itemOptions(),
+      input,
+      output,
+    });
+
+    expect(input.listenerCount('keypress')).toBe(1);
+    input.end();
+
+    await expect(resultPromise).rejects.toThrow('输入已结束');
+    expect(input.listenerCount('keypress')).toBe(0);
+  });
+
+  it('rejects multi-select on input end and removes keypress listener', async () => {
+    const { input, output } = createHarness();
+    const resultPromise = promptMultiSelect({
+      message: '选择规则',
+      options: itemOptions(),
+      input,
+      output,
+    });
+
+    expect(input.listenerCount('keypress')).toBe(1);
+    input.end();
+
+    await expect(resultPromise).rejects.toThrow('输入已结束');
+    expect(input.listenerCount('keypress')).toBe(0);
+  });
+
+  it('restores previous raw mode when prompt completes', async () => {
+    const { input, output, rawModes } = createHarness({ isRaw: true });
+    const resultPromise = promptSingleSelect({
+      message: '选择语言',
+      options: itemOptions(),
+      input,
+      output,
+    });
+
+    input.write(ENTER);
+
+    await expect(resultPromise).resolves.toBe('base.behavior-basic');
+    expect(rawModes).toEqual([true, true]);
+    expect(input.isRaw).toBe(true);
+  });
 });
 
-function createHarness(): PromptHarness {
+function createHarness({ isRaw = false }: { isRaw?: boolean } = {}): PromptHarness {
   const input = new PassThrough() as PassThrough & PromptInput;
   const chunks: string[] = [];
   const rawModes: boolean[] = [];
 
   input.isTTY = true;
+  input.isRaw = isRaw;
   input.setRawMode = vi.fn((mode: boolean) => {
+    input.isRaw = mode;
     rawModes.push(mode);
   });
 

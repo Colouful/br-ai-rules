@@ -1,7 +1,7 @@
 import readline from 'node:readline';
 import type { Readable, Writable } from 'node:stream';
 
-export type PromptInput = Readable & { isTTY?: boolean; setRawMode?: (mode: boolean) => void };
+export type PromptInput = Readable & { isTTY?: boolean; isRaw?: boolean; setRawMode?: (mode: boolean) => void };
 export type PromptOutput = Writable;
 export type PromptOption = {
   id: string;
@@ -45,7 +45,7 @@ export async function promptSingleSelect({
   assertOptions(options);
   return new Promise((resolve, reject) => {
     let cursor = 0;
-    const cleanup = startRawKeypress(input, onKeypress);
+    const cleanup = startRawKeypress(input, onKeypress, reject);
 
     renderSingleSelect(output, message, options, cursor);
 
@@ -88,7 +88,7 @@ export async function promptMultiSelect({
 
   return new Promise((resolve, reject) => {
     let cursor = 0;
-    const cleanup = startRawKeypress(input, onKeypress);
+    const cleanup = startRawKeypress(input, onKeypress, reject);
 
     renderMultiSelect(output, message, options, selected, cursor);
 
@@ -139,35 +139,112 @@ export async function promptText({
     terminal: Boolean(input.isTTY),
   });
 
-  return new Promise((resolve) => {
-    rl.question(`${message} `, (answer) => {
-      rl.close();
+  return new Promise((resolve, reject) => {
+    let settled = false;
+
+    const cleanup = (): void => {
+      rl.off('SIGINT', onSigint);
+      rl.off('close', onClose);
+      input.off('end', onEnd);
+      input.off('close', onInputClose);
+      input.off('error', onInputError);
       input.pause();
-      resolve(answer.trim());
+    };
+
+    const settle = <T>(callback: (value: T) => void, value: T): void => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      rl.close();
+      callback(value);
+    };
+
+    const rejectPrompt = (reason: Error): void => {
+      settle(reject, reason);
+    };
+
+    function onSigint(): void {
+      rejectPrompt(cancelError());
+    }
+
+    function onClose(): void {
+      rejectPrompt(new Error('输入已关闭'));
+    }
+
+    function onEnd(): void {
+      rejectPrompt(new Error('输入已结束'));
+    }
+
+    function onInputClose(): void {
+      rejectPrompt(new Error('输入已关闭'));
+    }
+
+    function onInputError(error: Error): void {
+      rejectPrompt(error);
+    }
+
+    rl.once('SIGINT', onSigint);
+    rl.once('close', onClose);
+    input.once('end', onEnd);
+    input.once('close', onInputClose);
+    input.once('error', onInputError);
+
+    rl.question(`${message} `, (answer) => {
+      settle(resolve, answer.trim());
     });
   });
 }
 
-function startRawKeypress(input: PromptInput, onKeypress: (value: string, key: KeypressKey) => void): () => void {
+function startRawKeypress(
+  input: PromptInput,
+  onKeypress: (value: string, key: KeypressKey) => void,
+  reject: (reason?: unknown) => void,
+): () => void {
+  const previousRawMode = Boolean(input.isRaw);
+  let cleaned = false;
+
+  const rejectFromInput = (reason: Error): void => {
+    cleanup();
+    reject(reason);
+  };
+
+  const onEnd = (): void => rejectFromInput(new Error('输入已结束'));
+  const onClose = (): void => rejectFromInput(new Error('输入已关闭'));
+  const onError = (error: Error): void => rejectFromInput(error);
+
+  function cleanup(): void {
+    if (cleaned) return;
+    cleaned = true;
+    input.off('keypress', onKeypress);
+    input.off('end', onEnd);
+    input.off('close', onClose);
+    input.off('error', onError);
+    input.setRawMode?.(previousRawMode);
+    input.pause();
+  }
+
   readline.emitKeypressEvents(input);
   input.setRawMode?.(true);
   input.resume();
   input.on('keypress', onKeypress);
+  input.once('end', onEnd);
+  input.once('close', onClose);
+  input.once('error', onError);
 
-  return () => {
-    input.off('keypress', onKeypress);
-    input.setRawMode?.(false);
-    input.pause();
-  };
+  return cleanup;
 }
 
 function handleAbort(key: KeypressKey, cleanup: () => void, reject: (reason?: unknown) => void): boolean {
   if (key.ctrl && key.name === 'c') {
     cleanup();
-    reject(new Error('用户取消'));
+    reject(cancelError());
     return true;
   }
   return false;
+}
+
+function cancelError(): Error {
+  return new Error('用户取消');
 }
 
 function applySpace(option: PromptOption, options: PromptOption[], selected: Set<string>): void {
