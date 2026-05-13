@@ -50,6 +50,51 @@ describe('selection model', () => {
     ]);
   });
 
+  it('keeps multiple existing sources through defaults and config rebuild', () => {
+    const existing = defaultConfig();
+    existing.sources = [
+      { type: 'local', path: './one' },
+      { type: 'local', path: './two' },
+    ];
+
+    const defaults = buildSelectionDefaults({ existingConfig: existing });
+    const config = buildInitConfigFromSelection({
+      ...defaults,
+      sync: false,
+    });
+
+    expect(defaults.sourcePath).toBe('./one');
+    expect(defaults.sources).toEqual([
+      { type: 'local', path: './one' },
+      { type: 'local', path: './two' },
+    ]);
+    expect(config.sources).toEqual([
+      { type: 'local', path: './one' },
+      { type: 'local', path: './two' },
+    ]);
+  });
+
+  it('does not inherit source assets when params override source path only', () => {
+    const existing = defaultConfig();
+    existing.sources = [{ type: 'local', path: './old' }];
+    existing.assets.include = ['base.behavior-basic', 'framework.vue', 'team.old'];
+
+    const defaults = buildSelectionDefaults({
+      paramDefaults: { sourcePath: './new' },
+      existingConfig: existing,
+    });
+    const config = buildInitConfigFromSelection({
+      ...defaults,
+      sync: false,
+    });
+
+    expect(defaults.sourcePath).toBe('./new');
+    expect(defaults.sources).toEqual([{ type: 'local', path: './new' }]);
+    expect(defaults.sourceAssetIds).toEqual([]);
+    expect(config.sources).toEqual([{ type: 'local', path: './new' }]);
+    expect(config.assets.include).toEqual(['base.behavior-basic', 'framework.vue']);
+  });
+
   it('applies default precedence params over existing over detected over conservative', () => {
     const existing = defaultConfig();
     existing.assets.include = ['base.behavior-basic', 'framework.react'];
