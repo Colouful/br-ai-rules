@@ -22,7 +22,7 @@ const RULES_DIR_NAME = 'rules';
 export const AssetSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
-  layer: z.enum(['base', 'language', 'framework', 'middleware', 'practice']),
+  layer: z.enum(['base', 'language', 'framework', 'middleware', 'practice', 'team']),
   version: z.string().default('0.2.0'),
   description: z.string().default(''),
   rules: z.array(z.string().min(1)).min(1),

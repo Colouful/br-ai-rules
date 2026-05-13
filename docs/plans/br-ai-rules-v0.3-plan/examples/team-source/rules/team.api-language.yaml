@@ -1,0 +1,15 @@
+id: team.api-language
+name: 接口字段说明必须中文
+category: docs
+severity: should
+appliesTo:
+  targets:
+    - generic
+    - claude
+    - cursor
+  stacks:
+    - generic
+content:
+  zh-CN: |
+    所有接口字段说明、错误码说明、业务枚举说明必须使用中文。
+    如果发现已有英文说明，不要自动批量修改，只在本次涉及范围内补齐。

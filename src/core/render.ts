@@ -5,6 +5,7 @@ import { renderClaude } from '../adapters/claude.js';
 import { renderCursor } from '../adapters/cursor.js';
 import type { RulesConfig } from './config.js';
 import { expandAssetsToRules, loadCustomRules, type Asset } from './assets.js';
+import { loadAllSources, type LoadedSource } from './source.js';
 import { upsertManagedBlock } from './managed-block.js';
 import type { Rule } from './rules.js';
 
@@ -19,6 +20,7 @@ export type ResolvedContext = {
   rules: Rule[];
   assets: Asset[];
   customRules: Rule[];
+  sources: LoadedSource[];
 };
 
 export async function resolveRules(root: string, config: RulesConfig): Promise<ResolvedContext> {
@@ -32,20 +34,58 @@ export async function resolveRules(root: string, config: RulesConfig): Promise<R
     if (idx >= 0) builtInRules.splice(idx, 1);
   }
 
+  // Load source assets and rules
+  const sources = await loadAllSources(config.sources, root);
+  const sourceAssets: Asset[] = [];
+  const sourceRules: Rule[] = [];
+  for (const source of sources) {
+    sourceAssets.push(...source.assets);
+    sourceRules.push(...source.rules);
+  }
+
+  // Filter source assets by include/exclude
+  const includedSourceAssets = sourceAssets.filter(
+    (a) => config.assets.include.includes(a.id) && !config.assets.exclude.includes(a.id),
+  );
+  const includedSourceRuleIds = new Set<string>();
+  for (const asset of includedSourceAssets) {
+    for (const ruleId of asset.rules) includedSourceRuleIds.add(ruleId);
+  }
+  const includedSourceRules = sourceRules.filter((r) => includedSourceRuleIds.has(r.id));
+
+  // Apply disabled rules to source rules
+  for (const disabled of config.disabledRules) {
+    const idx = includedSourceRules.findIndex((r) => r.id === disabled);
+    if (idx >= 0) includedSourceRules.splice(idx, 1);
+  }
+
   let customRules: Rule[] = [];
   const customConfig = config.customRules;
   if (customConfig && typeof customConfig === 'object' && 'autoDiscover' in customConfig && customConfig.autoDiscover) {
     customRules = await loadCustomRules(customConfig.paths, root);
   }
 
-  const all = [...builtInRules, ...customRules];
+  // Duplicate detection across all tiers
+  const all = [...builtInRules, ...includedSourceRules, ...customRules];
   const seen = new Set<string>();
   for (const rule of all) {
     if (seen.has(rule.id)) throw new Error(`Duplicated rule id: ${rule.id}`);
     seen.add(rule.id);
   }
 
-  return { rules: [...builtInRules, ...customRules], assets, customRules };
+  // Duplicate asset id detection
+  const allAssetIds = new Set<string>();
+  for (const asset of [...assets, ...includedSourceAssets]) {
+    if (allAssetIds.has(asset.id)) throw new Error(`Duplicated asset id: ${asset.id}`);
+    allAssetIds.add(asset.id);
+  }
+
+  return {
+    rules: [...builtInRules, ...includedSourceRules, ...customRules],
+    assets: [...assets, ...includedSourceAssets],
+    customRules,
+    sources,
+  };
 }
 
 export function renderFiles(config: RulesConfig, ctx: ResolvedContext): RenderedFile[] {

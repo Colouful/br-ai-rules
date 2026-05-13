@@ -4,6 +4,7 @@ import { loadConfig } from '../core/config.js';
 import { extractManagedBlock } from '../core/managed-block.js';
 import { renderFiles, resolveRules } from '../core/render.js';
 import { loadBuiltInAssets, loadBuiltInRules, validateAssets } from '../core/assets.js';
+import { loadAllSources, validateSourceAssets } from '../core/source.js';
 
 export async function checkCommand(root = process.cwd()): Promise<void> {
   const errors: string[] = [];
@@ -24,8 +25,12 @@ export async function checkCommand(root = process.cwd()): Promise<void> {
     const assetErrors = validateAssets(allAssets, allRules);
     errors.push(...assetErrors);
 
+    const allSourceAssets = (await loadAllSources(config.sources, root)).flatMap((s) => s.assets);
+
     for (const assetId of config.assets.include) {
-      if (!allAssets.find((a) => a.id === assetId)) {
+      const inBuiltIn = allAssets.find((a) => a.id === assetId);
+      const inSource = allSourceAssets.find((a) => a.id === assetId);
+      if (!inBuiltIn && !inSource) {
         errors.push(`Unknown asset in config: ${assetId}`);
       }
     }
@@ -37,6 +42,15 @@ export async function checkCommand(root = process.cwd()): Promise<void> {
     }
   } catch (e) {
     errors.push(`Failed to load built-in assets: ${e instanceof Error ? e.message : e}`);
+  }
+
+  // Validate sources
+  try {
+    const sources = await loadAllSources(config.sources, root);
+    const sourceErrors = validateSourceAssets(sources);
+    errors.push(...sourceErrors);
+  } catch (e) {
+    errors.push(`Failed to load sources: ${e instanceof Error ? e.message : e}`);
   }
 
   let ctx;

@@ -1,0 +1,9 @@
+id: team.backend-standard
+name: 团队后端标准规则
+version: 0.1.0
+category: team
+description: 团队后端项目通用 AI Coding 规则。
+rules:
+  - team.no-raw-exception
+  - team.auth-change-check
+  - team.api-language

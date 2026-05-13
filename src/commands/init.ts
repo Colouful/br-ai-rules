@@ -2,7 +2,7 @@ import { defaultConfig, writeConfig } from '../core/config.js';
 import { resolveStacksToAssets } from '../core/assets.js';
 import { syncCommand } from './sync.js';
 
-export async function initCommand(options: { sync?: boolean; language?: string; targets?: string; stack?: string }, root = process.cwd()): Promise<void> {
+export async function initCommand(options: { sync?: boolean; language?: string; targets?: string; stack?: string; source?: string; asset?: string }, root = process.cwd()): Promise<void> {
   const config = defaultConfig();
   if (options.language) config.language = options.language;
   if (options.targets) {
@@ -14,6 +14,15 @@ export async function initCommand(options: { sync?: boolean; language?: string; 
   if (options.stack) {
     const stacks = options.stack.split(',').map((s) => s.trim()).filter(Boolean);
     config.assets.include = resolveStacksToAssets(stacks);
+  }
+  if (options.source) {
+    config.sources.push({ type: 'local', path: options.source });
+  }
+  if (options.asset) {
+    const assetIds = options.asset.split(',').map((a) => a.trim()).filter(Boolean);
+    for (const id of assetIds) {
+      if (!config.assets.include.includes(id)) config.assets.include.push(id);
+    }
   }
   await writeConfig(root, config);
   console.log('Created .ai-rules/config.json');

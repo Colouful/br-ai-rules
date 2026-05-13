@@ -8,7 +8,7 @@ describe('render files', () => {
   it('renders default targets', async () => {
     const config = defaultConfig();
     const { rules, assets } = await expandAssetsToRules(config.assets.include, config.assets.exclude);
-    const ctx: ResolvedContext = { rules, assets, customRules: [] };
+    const ctx: ResolvedContext = { rules, assets, customRules: [], sources: [] };
     const files = renderFiles(config, ctx);
     expect(files.map((file) => file.path)).toEqual([
       'AGENTS.md',

@@ -8,6 +8,13 @@ const PKG_VERSION: string = typeof __PKG_VERSION__ !== 'undefined' ? __PKG_VERSI
 export const CONFIG_PATH = '.ai-rules/config.json';
 export const GENERATED_PATH = '.ai-rules/generated.json';
 
+export const SourceConfigSchema = z.object({
+  type: z.literal('local'),
+  path: z.string().min(1),
+});
+
+export type SourceConfig = z.infer<typeof SourceConfigSchema>;
+
 export const ConfigSchema = z.object({
   version: z.string().default('0.2.0'),
   language: z.string().default('zh-CN'),
@@ -19,6 +26,7 @@ export const ConfigSchema = z.object({
       mode: z.enum(['single', 'grouped']).default('single'),
     }).default({ enabled: true, mode: 'single' }),
   }).default({ generic: true, claude: true, cursor: { enabled: true, mode: 'single' } }),
+  sources: z.array(SourceConfigSchema).default([]),
   assets: z.object({
     include: z.array(z.string()).default(['base.behavior-basic']),
     exclude: z.array(z.string()).default([]),
@@ -62,6 +70,7 @@ export function defaultConfig(overrides: Partial<RulesConfig> = {}): RulesConfig
     version: PKG_VERSION,
     language: 'zh-CN',
     targets: { generic: true, claude: true, cursor: { enabled: true, mode: 'single' } },
+    sources: [],
     assets: { include: ['base.behavior-basic'], exclude: [] },
     disabledRules: [],
     customRules: { autoDiscover: true, paths: ['.ai-rules/rules/*.yaml'] },

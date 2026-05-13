@@ -1,0 +1,8 @@
+id: team.frontend-standard
+name: 团队前端标准规则
+version: 0.1.0
+category: team
+description: 团队前端项目通用 AI Coding 规则。
+rules:
+  - team.no-auto-dependency
+  - team.api-language

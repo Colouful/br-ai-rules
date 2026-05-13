@@ -102,15 +102,33 @@
   },
   "hotPaths": [
     {
+      "path": "src/core/config.ts",
+      "accessCount": 13,
+      "lastAccessed": 1778639720207,
+      "type": "file"
+    },
+    {
       "path": "package.json",
       "accessCount": 10,
       "lastAccessed": 1778590758293,
       "type": "file"
     },
     {
-      "path": "src/core/config.ts",
-      "accessCount": 10,
-      "lastAccessed": 1778590908160,
+      "path": "src/commands/check.ts",
+      "accessCount": 7,
+      "lastAccessed": 1778640424308,
+      "type": "file"
+    },
+    {
+      "path": "src/commands/init.ts",
+      "accessCount": 6,
+      "lastAccessed": 1778639897863,
+      "type": "file"
+    },
+    {
+      "path": "src/cli.ts",
+      "accessCount": 6,
+      "lastAccessed": 1778639934884,
       "type": "file"
     },
     {
@@ -120,9 +138,15 @@
       "type": "file"
     },
     {
-      "path": "src/cli.ts",
-      "accessCount": 4,
-      "lastAccessed": 1778576067478,
+      "path": "src/core/render.ts",
+      "accessCount": 5,
+      "lastAccessed": 1778639829283,
+      "type": "file"
+    },
+    {
+      "path": "src/core/generated.ts",
+      "accessCount": 5,
+      "lastAccessed": 1778639871625,
       "type": "file"
     },
     {
@@ -138,39 +162,27 @@
       "type": "file"
     },
     {
-      "path": "src/commands/init.ts",
-      "accessCount": 4,
-      "lastAccessed": 1778586792325,
-      "type": "file"
-    },
-    {
       "path": "src/core/rules.ts",
-      "accessCount": 3,
-      "lastAccessed": 1778580786462,
-      "type": "file"
-    },
-    {
-      "path": "src/core/render.ts",
-      "accessCount": 3,
-      "lastAccessed": 1778580857297,
-      "type": "file"
-    },
-    {
-      "path": "src/core/generated.ts",
-      "accessCount": 3,
-      "lastAccessed": 1778580867726,
-      "type": "file"
-    },
-    {
-      "path": "src/commands/check.ts",
-      "accessCount": 3,
-      "lastAccessed": 1778590658812,
+      "accessCount": 4,
+      "lastAccessed": 1778639598987,
       "type": "file"
     },
     {
       "path": "tsup.config.ts",
       "accessCount": 3,
       "lastAccessed": 1778590897526,
+      "type": "file"
+    },
+    {
+      "path": "src/commands/diff.ts",
+      "accessCount": 3,
+      "lastAccessed": 1778639597635,
+      "type": "file"
+    },
+    {
+      "path": "src/commands/list.ts",
+      "accessCount": 3,
+      "lastAccessed": 1778639598068,
       "type": "file"
     },
     {
@@ -192,21 +204,9 @@
       "type": "file"
     },
     {
-      "path": "src/commands/diff.ts",
-      "accessCount": 2,
-      "lastAccessed": 1778576022299,
-      "type": "file"
-    },
-    {
-      "path": "src/commands/list.ts",
-      "accessCount": 2,
-      "lastAccessed": 1778576053219,
-      "type": "file"
-    },
-    {
       "path": "src/core/checksum.ts",
-      "accessCount": 1,
-      "lastAccessed": 1778574077567,
+      "accessCount": 2,
+      "lastAccessed": 1778639599366,
       "type": "file"
     },
     {

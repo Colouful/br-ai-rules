@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"pnpm typecheck 2>&1 && pnpm test 2>&1 && pnpm build 2>&1\",\"description\":\"Typecheck, test, and build\"}",
-  "error": "Exit code 1\n\n> @br-ai/rules@0.2.2-beta.1 typecheck /Users/lizhenwei/workspace/vueworkspace/bairong/br-ai-rules\n> tsc --noEmit\n\n\n> @br-ai/rules@0.2.2-beta.1 test /Users/lizhenwei/workspace/vueworkspace/bairong/br-ai-rules\n> vitest run\n\n\n RUN  v2.1.9 /Users/lizhenwei/workspace/vueworkspace/bairong/br-ai-rules\n\n ✓ tests/managed-block.test.ts (3 tests) 2ms\nstdout | tests/sync-target-cleanup.test.ts > sync target cleanup > removes generated files for disabled targets\nCreated .ai-rules/config.json\n\nst...",
-  "timestamp": "2026-05-12T13:02:40.950Z",
+  "tool_input_preview": "{\"command\":\"TEST_DIR=\\\"/tmp/br-ai-rules-v03-test\\\" && cd \\\"$TEST_DIR\\\" && node /Users/lizhenwei/workspace/vueworkspace/bairong/br-ai-rules/dist/cli.js check 2>&1\",\"description\":\"Local acceptance: chec...",
+  "error": "Exit code 1\n✗ Unknown asset in config: team.backend-standard",
+  "timestamp": "2026-05-13T02:46:36.127Z",
   "retry_count": 1
 }

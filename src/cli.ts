@@ -5,6 +5,8 @@ import { diffCommand } from './commands/diff.js';
 import { checkCommand } from './commands/check.js';
 import { listCommand } from './commands/list.js';
 import { addCommand } from './commands/add.js';
+import { sourceListCommand } from './commands/source-list.js';
+import { assetListCommand } from './commands/asset-list.js';
 
 const program = new Command();
 
@@ -20,6 +22,8 @@ program
   .option('--language <language>', 'Rule language, default zh-CN')
   .option('--targets <targets>', 'Comma-separated targets: generic,claude,cursor')
   .option('--stack <stack>', 'Comma-separated tech stacks, e.g., react,typescript')
+  .option('--source <path>', 'Local team source path')
+  .option('--asset <ids>', 'Comma-separated source asset ids to include')
   .action((options) => initCommand(options));
 
 program
@@ -43,6 +47,12 @@ program
   .option('--disabled', 'Show disabled rules')
   .option('--all', 'Show everything')
   .action((options) => listCommand(options));
+
+const sourceCmd = program.command('source').description('Manage team rule sources');
+sourceCmd.command('list').description('List configured sources').action(() => sourceListCommand());
+
+const assetCmd = program.command('asset').description('Manage rule assets');
+assetCmd.command('list').description('List all available assets').action(() => assetListCommand());
 
 program.parseAsync(process.argv).catch((error) => {
   console.error(error instanceof Error ? error.message : error);

@@ -1,0 +1,9 @@
+{
+  "name": "team-ai-rules",
+  "version": "0.1.0",
+  "description": "Example team shared AI coding rules",
+  "assets": [
+    "team.frontend-standard",
+    "team.backend-standard"
+  ]
+}
