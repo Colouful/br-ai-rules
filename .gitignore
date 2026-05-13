@@ -5,3 +5,4 @@ coverage
 *.log
 dogfood-team-source/
 dogfood-real-project/
+.omx/
