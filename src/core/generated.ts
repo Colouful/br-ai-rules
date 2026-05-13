@@ -5,6 +5,9 @@ import { sha256 } from './checksum.js';
 import type { RenderedFile } from './render.js';
 import type { ResolvedContext } from './render.js';
 
+declare const __PKG_VERSION__: string;
+const PKG_VERSION: string = typeof __PKG_VERSION__ !== 'undefined' ? __PKG_VERSION__ : '0.0.0-dev';
+
 export async function writeGenerated(root: string, files: RenderedFile[], ctx: ResolvedContext): Promise<void> {
   const sourceRuleIds = new Set<string>();
   const sourceAssetIds = new Set<string>();
@@ -14,7 +17,7 @@ export async function writeGenerated(root: string, files: RenderedFile[], ctx: R
   }
 
   const payload = {
-    version: '0.3.0',
+    version: PKG_VERSION,
     generatedAt: new Date().toISOString(),
     sources: ctx.sources.map((s) => ({
       type: s.config.type,

@@ -8,12 +8,15 @@ import { addCommand } from './commands/add.js';
 import { sourceListCommand } from './commands/source-list.js';
 import { assetListCommand } from './commands/asset-list.js';
 
+declare const __PKG_VERSION__: string;
+const PKG_VERSION: string = typeof __PKG_VERSION__ !== 'undefined' ? __PKG_VERSION__ : '0.0.0-dev';
+
 const program = new Command();
 
 program
   .name('br-rules')
   .description('BR AI Rules - AI Coding rules installer for teams')
-  .version('0.2.0');
+  .version(PKG_VERSION);
 
 program
   .command('init')

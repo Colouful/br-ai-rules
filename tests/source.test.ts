@@ -251,7 +251,8 @@ describe('generated.json source snapshots', () => {
 
     const generated = JSON.parse(await readFile(join(tmpDir, GENERATED_PATH), 'utf8'));
 
-    expect(generated.version).toBe('0.3.0');
+    const pkg = JSON.parse(await readFile(join(process.cwd(), 'package.json'), 'utf8'));
+    expect(generated.version).toBe(pkg.version);
     expect(generated.sources).toHaveLength(1);
     expect(generated.sources[0]).toMatchObject({
       type: 'local',

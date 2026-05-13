@@ -109,8 +109,8 @@
     },
     {
       "path": "package.json",
-      "accessCount": 10,
-      "lastAccessed": 1778590758293,
+      "accessCount": 12,
+      "lastAccessed": 1778643624324,
       "type": "file"
     },
     {
@@ -120,33 +120,33 @@
       "type": "file"
     },
     {
+      "path": "src/cli.ts",
+      "accessCount": 7,
+      "lastAccessed": 1778643628377,
+      "type": "file"
+    },
+    {
+      "path": "README.md",
+      "accessCount": 7,
+      "lastAccessed": 1778643902875,
+      "type": "file"
+    },
+    {
       "path": "src/commands/init.ts",
       "accessCount": 6,
       "lastAccessed": 1778639897863,
       "type": "file"
     },
     {
-      "path": "src/cli.ts",
+      "path": "src/core/generated.ts",
       "accessCount": 6,
-      "lastAccessed": 1778639934884,
-      "type": "file"
-    },
-    {
-      "path": "README.md",
-      "accessCount": 5,
-      "lastAccessed": 1778590799683,
+      "lastAccessed": 1778643633908,
       "type": "file"
     },
     {
       "path": "src/core/render.ts",
       "accessCount": 5,
       "lastAccessed": 1778639829283,
-      "type": "file"
-    },
-    {
-      "path": "src/core/generated.ts",
-      "accessCount": 5,
-      "lastAccessed": 1778639871625,
       "type": "file"
     },
     {
