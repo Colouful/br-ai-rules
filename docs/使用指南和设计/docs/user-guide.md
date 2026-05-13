@@ -1,4 +1,4 @@
-# BR AI Rules V0.3 使用指南
+# BR AI Rules V0.4 使用指南
 
 ## 1. BR AI Rules 是什么
 
@@ -10,7 +10,7 @@ CLAUDE.md
 .cursor/rules/ai-coding.mdc
 ```
 
-当前 V0.3 支持：内置默认规则资产、技术栈选择、项目自定义规则、本地团队规则源 local source、source asset 选择、generated.json 快照、check / sync / diff / list / add、source list / asset list。
+当前 V0.4 支持：内置默认规则资产、技术栈选择、项目自定义规则、本地团队规则源（`br-rules source init` 默认生成 `team.starter-pack` + 示例规则，不自动生成 frontend/backend 两套资产模板）、`br-rules source check` 独立校验规则源、`br-rules doctor` 项目诊断、generated.json 快照、check / sync / diff / list / add、source list / asset list。
 
 ## 2. 安装方式
 
@@ -22,7 +22,7 @@ npm install -D @br-ai/rules@beta
 当前期望版本：
 
 ```text
-0.3.0-beta.1
+0.4.0-beta.1
 ```
 
 ## 3. 最简单初始化
@@ -61,7 +61,35 @@ CLAUDE.md
 
 ## 4. 使用团队规则源初始化
 
-V0.3 支持本地团队规则源。
+V0.4 支持本地团队规则源。推荐先用 CLI 生成**轻量**骨架，再按需扩展为多资产结构。
+
+### 4.1 一键创建并校验（默认 `team.starter-pack`）
+
+```bash
+npx @br-ai/rules@beta source init ./team-rules-source
+npx @br-ai/rules@beta source check ./team-rules-source
+```
+
+默认会生成 `br-rules.source.json`、`assets/team.starter-pack.yaml`、`rules/team.code-review-required.yaml`（**不**生成 `team.frontend-standard` / `team.backend-standard` 两套模板）。
+
+接入业务项目示例：
+
+```bash
+npx @br-ai/rules@beta init \
+  --stack spring-boot,java,mysql,redis \
+  --source ./team-rules-source \
+  --asset team.starter-pack
+```
+
+项目内诊断：
+
+```bash
+npx @br-ai/rules@beta doctor
+```
+
+### 4.2 扩展示例（多资产 team-source）
+
+仓库内 `docs/使用指南和设计/examples/team-source` 演示多资产目录（含 `team.backend-standard` / `team.frontend-standard`），团队可自行维护或从 4.1 的骨架演进。
 
 ```text
 team-source/
@@ -153,7 +181,7 @@ npx @br-ai/rules@beta add team.my-rule
 
 ```json
 {
-  "version": "0.3.0-beta.1",
+  "version": "0.4.0-beta.1",
   "language": "zh-CN",
   "targets": {
     "generic": true,
@@ -206,8 +234,11 @@ CLAUDE.md
 ## 13. 推荐工作流
 
 ```bash
-npx @br-ai/rules@beta init --stack vue,typescript --source /path/to/team-source --asset team.frontend-standard
+npx @br-ai/rules@beta source init ./team-rules-source
+npx @br-ai/rules@beta source check ./team-rules-source
+npx @br-ai/rules@beta init --stack vue,typescript --source ./team-rules-source --asset team.starter-pack
 npx @br-ai/rules@beta check
+npx @br-ai/rules@beta doctor
 npx @br-ai/rules@beta source list
 npx @br-ai/rules@beta asset list
 git diff

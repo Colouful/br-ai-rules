@@ -3,3 +3,5 @@ dist
 coverage
 .DS_Store
 *.log
+dogfood-team-source/
+dogfood-real-project/

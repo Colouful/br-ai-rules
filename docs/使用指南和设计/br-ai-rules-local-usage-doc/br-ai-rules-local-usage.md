@@ -1,7 +1,7 @@
 # BR AI Rules 本地使用流程与规则读取机制说明
 
-> 适用版本：`@br-ai/rules@0.3.0-beta.1`  
-> 当前阶段目标：先把本地规则安装、同步、检查、团队本地规则源用顺；暂不做远端规则源、Web 平台、GitHub source、npm source。
+> 适用版本：`@br-ai/rules@0.4.0-beta.1`  
+> 当前阶段目标：先把本地规则安装、同步、检查、团队本地规则源（含 `source init` / `source check` / `doctor`）用顺；暂不做远端规则源、Web 平台、GitHub source、npm source。
 
 ---
 
@@ -227,7 +227,7 @@ your-project/
       team.xxx.yaml
 ```
 
-团队规则源通常在业务项目外部：
+团队规则源通常在业务项目外部。`br-rules source init` **默认**生成 `team.starter-pack` + `team.code-review-required`（不自动生成 frontend/backend 两套资产模板）；下列目录树为仓库内**扩展示例**（多资产 `team-source`），团队可按需自建或演进：
 
 ```text
 team-source/
@@ -252,7 +252,7 @@ team-source/
 
 ```json
 {
-  "version": "0.3.0-beta.1",
+  "version": "0.4.0-beta.1",
   "language": "zh-CN",
   "targets": {
     "generic": true,
@@ -376,7 +376,38 @@ npx @br-ai/rules@beta add team.project-only-rule
 
 ## 12. 团队规则源 team-source
 
-V0.3 新增能力。
+V0.4 起推荐用 `br-rules source init` 生成轻量骨架，并用 `br-rules source check <path>` 做独立校验；业务项目内用 `br-rules doctor` 做配置与生成物诊断。
+
+### 12.1 命令行默认骨架（`team.starter-pack`）
+
+```bash
+npx @br-ai/rules@beta source init ./team-rules-source
+npx @br-ai/rules@beta source check ./team-rules-source
+```
+
+默认生成：
+
+```text
+team-rules-source/
+  br-rules.source.json
+  assets/
+    team.starter-pack.yaml
+  rules/
+    team.code-review-required.yaml
+```
+
+接入项目示例：
+
+```bash
+npx @br-ai/rules@beta init \
+  --stack spring-boot,java,mysql,redis \
+  --source ./team-rules-source \
+  --asset team.starter-pack
+```
+
+### 12.2 扩展示例（多资产 team-source）
+
+下列结构对应仓库内 `docs/使用指南和设计/examples/team-source` 演示目录，便于理解多资产拆分；**不是** `source init` 的默认产物。
 
 结构：
 
@@ -450,13 +481,24 @@ content:
 
 ## 13. 初始化流程
 
-后端项目：
+轻量团队源（推荐起步）：
+
+```bash
+npx @br-ai/rules@beta source init ./team-rules-source
+npx @br-ai/rules@beta source check ./team-rules-source
+npx @br-ai/rules@beta init \
+  --stack spring-boot,java,mysql,redis \
+  --source ./team-rules-source \
+  --asset team.starter-pack
+```
+
+多资产团队源（扩展示例）——后端项目：
 
 ```bash
 npx @br-ai/rules@beta init   --stack spring-boot,java,mysql,redis   --source /path/to/team-source   --asset team.backend-standard
 ```
 
-前端项目：
+多资产团队源——前端项目：
 
 ```bash
 npx @br-ai/rules@beta init   --stack vue,typescript   --source /path/to/team-source   --asset team.frontend-standard
@@ -480,13 +522,26 @@ npx @br-ai/rules@beta init   --stack vue,typescript   --source /path/to/team-sou
 
 ## 14. 常用命令
 
-初始化：
+创建并校验团队规则源（V0.4）：
+
+```bash
+npx @br-ai/rules@beta source init ./team-rules-source
+npx @br-ai/rules@beta source check ./team-rules-source
+```
+
+项目诊断：
+
+```bash
+npx @br-ai/rules@beta doctor
+```
+
+初始化（无团队源）：
 
 ```bash
 npx @br-ai/rules@beta init --stack vue,typescript
 ```
 
-使用团队规则源初始化：
+使用团队规则源初始化（多资产示例）：
 
 ```bash
 npx @br-ai/rules@beta init   --stack spring-boot,java,mysql,redis   --source /path/to/team-source   --asset team.backend-standard
@@ -589,10 +644,10 @@ npm 包内部 built-in YAML
 
 ```text
 内置规则：解决通用 AI Coding 行为约束
-team-source：解决团队共享规范
+team-source：解决团队共享规范（`source init` 默认轻量包，亦可扩展多资产）
 .ai-rules/rules：解决项目私有规范
 AGENTS.md / CLAUDE.md / Cursor Rules：作为 AI 工具最终读取入口
-check / diff / sync：保证规则状态可控
+source check / doctor / check / diff / sync：保证规则状态可控
 ```
 
 ---

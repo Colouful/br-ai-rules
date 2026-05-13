@@ -4,7 +4,7 @@
   "description": "A lightweight AI Coding rules installer for teams.",
   "type": "module",
   "bin": {
-    "br-rules": "./dist/cli.js"
+    "br-rules": "dist/cli.js"
   },
   "files": [
     "dist",
@@ -16,7 +16,13 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
-  "keywords": ["ai-coding", "rules", "cursor", "claude", "agents"],
+  "keywords": [
+    "ai-coding",
+    "rules",
+    "cursor",
+    "claude",
+    "agents"
+  ],
   "license": "MIT",
   "dependencies": {
     "commander": "^12.1.0",

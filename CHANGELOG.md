@@ -11,6 +11,8 @@
 ### Changed
 
 - 发布版本号对齐 V0.4 beta；README 补充 V0.4 Quick Start 与本地源说明。
+- 文档与示例：`docs/使用指南和设计/`、`examples/generated-project`、历史计划中的示例 JSON 版本号对齐 `0.4.0-beta.1`；使用指南与本地说明文档明确 **`source init` 默认 `team.starter-pack`**，多资产 `team-source` 标为扩展示例。
+- `package.json`：`npm pkg fix` 将 `bin.br-rules` 规范为 `dist/cli.js`（消除 publish 时 bin 名清洗告警）。
 
 ## 0.3.0-beta.1
 
