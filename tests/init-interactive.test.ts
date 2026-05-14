@@ -237,6 +237,96 @@ describe('init interactive orchestrator', () => {
     expect(config.assets.include).toEqual(['base.behavior-basic']);
   });
 
+  it('removes only the default source and keeps remaining source assets for multi-source config', async () => {
+    const tmpRoot = await createRoot();
+    await createSingleAssetSource(tmpRoot, 'one-source', 'team.one');
+    await createSingleAssetSource(tmpRoot, 'two-source', 'team.two');
+    const existing = defaultConfig();
+    existing.sources = [
+      { type: 'local', path: 'one-source' },
+      { type: 'local', path: 'two-source' },
+    ];
+    existing.assets.include = ['base.behavior-basic', 'team.one', 'team.two'];
+    await mkdir(join(tmpRoot, '.ai-rules'), { recursive: true });
+    await writeFile(join(tmpRoot, '.ai-rules/config.json'), `${JSON.stringify(existing, null, 2)}\n`, 'utf8');
+
+    await initCommand({ interactive: true, sync: false }, tmpRoot, {
+      isTTY: true,
+      prompts: {
+        existingConfigAction: async () => 'reconfigure',
+        selectAssets: async () => ['base.behavior-basic'],
+        selectTargets: async () => ['generic'],
+        sourcePath: async () => null,
+        confirmSummary: async () => true,
+      },
+    });
+
+    const config = await loadConfig(tmpRoot);
+    expect(config.sources).toEqual([{ type: 'local', path: 'two-source' }]);
+    expect(config.assets.include).toEqual(['base.behavior-basic', 'team.two']);
+  });
+
+  it('does not keep orphan assets when the removed default source is invalid', async () => {
+    const tmpRoot = await createRoot();
+    await createSingleAssetSource(tmpRoot, 'two-source', 'team.two');
+    const existing = defaultConfig();
+    existing.sources = [
+      { type: 'local', path: 'missing-source' },
+      { type: 'local', path: 'two-source' },
+    ];
+    existing.assets.include = ['base.behavior-basic', 'team.missing', 'team.two'];
+    await mkdir(join(tmpRoot, '.ai-rules'), { recursive: true });
+    await writeFile(join(tmpRoot, '.ai-rules/config.json'), `${JSON.stringify(existing, null, 2)}\n`, 'utf8');
+
+    await initCommand({ interactive: true, sync: false }, tmpRoot, {
+      isTTY: true,
+      prompts: {
+        existingConfigAction: async () => 'reconfigure',
+        selectAssets: async () => ['base.behavior-basic'],
+        selectTargets: async () => ['generic'],
+        sourcePath: async () => null,
+        confirmSummary: async () => true,
+      },
+    });
+
+    const config = await loadConfig(tmpRoot);
+    expect(config.sources).toEqual([{ type: 'local', path: 'two-source' }]);
+    expect(config.assets.include).toEqual(['base.behavior-basic', 'team.two']);
+  });
+
+  it('keeps original source config when remaining source assets cannot be audited safely', async () => {
+    const tmpRoot = await createRoot();
+    await createSingleAssetSource(tmpRoot, 'one-source', 'team.one');
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const existing = defaultConfig();
+    existing.sources = [
+      { type: 'local', path: 'one-source' },
+      { type: 'local', path: 'missing-source' },
+    ];
+    existing.assets.include = ['base.behavior-basic', 'team.one', 'team.missing'];
+    await mkdir(join(tmpRoot, '.ai-rules'), { recursive: true });
+    await writeFile(join(tmpRoot, '.ai-rules/config.json'), `${JSON.stringify(existing, null, 2)}\n`, 'utf8');
+
+    await initCommand({ interactive: true, sync: false }, tmpRoot, {
+      isTTY: true,
+      prompts: {
+        existingConfigAction: async () => 'reconfigure',
+        selectAssets: async () => ['base.behavior-basic'],
+        selectTargets: async () => ['generic'],
+        sourcePath: async () => null,
+        confirmSummary: async () => true,
+      },
+    });
+
+    const config = await loadConfig(tmpRoot);
+    expect(warnSpy).toHaveBeenCalledWith('! 无法校验剩余规则源，已保留原规则源配置: missing-source');
+    expect(config.sources).toEqual([
+      { type: 'local', path: 'one-source' },
+      { type: 'local', path: 'missing-source' },
+    ]);
+    expect(config.assets.include).toEqual(['base.behavior-basic', 'team.one', 'team.missing']);
+  });
+
   it('uses existing source asset subset as defaults when reconfiguring an existing source', async () => {
     const tmpRoot = await createRoot();
     await createTwoAssetSource(tmpRoot, 'team-source');
@@ -263,6 +353,54 @@ describe('init interactive orchestrator', () => {
     expect(selectSourceAssets).toHaveBeenCalledWith(['team.one', 'team.two'], ['team.one']);
     expect(config.sources).toEqual([{ type: 'local', path: 'team-source' }]);
     expect(config.assets.include).toEqual(['base.behavior-basic', 'team.one']);
+  });
+
+  it('skips source setup when source audit succeeds but no assets are available', async () => {
+    const tmpRoot = await createRoot();
+    await createEmptySource(tmpRoot, 'empty-source');
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const sourceRetryAction = vi.fn<() => Promise<'retry' | 'skip' | 'exit'>>().mockResolvedValue('skip');
+
+    await initCommand({ interactive: true, sync: false }, tmpRoot, {
+      isTTY: true,
+      prompts: {
+        selectAssets: async () => ['base.behavior-basic'],
+        selectTargets: async () => ['generic'],
+        sourcePath: async () => 'empty-source',
+        sourceRetryAction,
+        confirmSummary: async () => true,
+      },
+    });
+
+    const config = await loadConfig(tmpRoot);
+    expect(sourceRetryAction).toHaveBeenCalledTimes(1);
+    expect(errorSpy).toHaveBeenCalledWith('✗ 规则源没有可用资产: empty-source');
+    expect(config.sources).toEqual([]);
+    expect(config.assets.include).toEqual(['base.behavior-basic']);
+  });
+
+  it('exits without writing config when an empty source chooses exit', async () => {
+    const tmpRoot = await createRoot();
+    await createEmptySource(tmpRoot, 'empty-source');
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const sourceRetryAction = vi.fn<() => Promise<'retry' | 'skip' | 'exit'>>().mockResolvedValue('exit');
+
+    await initCommand({ interactive: true, sync: false }, tmpRoot, {
+      isTTY: true,
+      prompts: {
+        selectAssets: async () => ['base.behavior-basic'],
+        selectTargets: async () => ['generic'],
+        sourcePath: async () => 'empty-source',
+        sourceRetryAction,
+        confirmSummary: async () => {
+          throw new Error('confirmSummary should not run after exit');
+        },
+      },
+    });
+
+    expect(sourceRetryAction).toHaveBeenCalledTimes(1);
+    expect(errorSpy).toHaveBeenCalledWith('✗ 规则源没有可用资产: empty-source');
+    await expect(readFile(join(tmpRoot, '.ai-rules/config.json'), 'utf8')).rejects.toMatchObject({ code: 'ENOENT' });
   });
 
   it('retries injected source path after invalid path and skips when second answer is null', async () => {
@@ -323,6 +461,52 @@ describe('init interactive orchestrator', () => {
     await expect(readFile(join(tmpRoot, '.ai-rules/config.json'), 'utf8')).rejects.toMatchObject({ code: 'ENOENT' });
   });
 });
+
+async function createEmptySource(rootPath: string, sourceDir: string): Promise<void> {
+  const sourceRoot = join(rootPath, sourceDir);
+  await mkdir(sourceRoot, { recursive: true });
+  await writeFile(
+    join(sourceRoot, 'br-rules.source.json'),
+    JSON.stringify({ name: 'empty-rules', version: '1.0.0', assets: [] }, null, 2),
+    'utf8',
+  );
+}
+
+async function createSingleAssetSource(rootPath: string, sourceDir: string, assetId: string): Promise<void> {
+  const sourceRoot = join(rootPath, sourceDir);
+  const ruleId = `${assetId}.rule`;
+  await mkdir(join(sourceRoot, 'assets'), { recursive: true });
+  await mkdir(join(sourceRoot, 'rules'), { recursive: true });
+  await writeFile(
+    join(sourceRoot, 'br-rules.source.json'),
+    JSON.stringify({ name: sourceDir, version: '1.0.0', assets: [assetId] }, null, 2),
+    'utf8',
+  );
+  await writeFile(
+    join(sourceRoot, 'assets', `${assetId}.yaml`),
+    [
+      `id: ${assetId}`,
+      `name: ${assetId}`,
+      'layer: team',
+      'rules:',
+      `  - ${ruleId}`,
+    ].join('\n'),
+    'utf8',
+  );
+  await writeFile(
+    join(sourceRoot, 'rules', `${ruleId}.yaml`),
+    [
+      `id: ${ruleId}`,
+      `name: ${ruleId}`,
+      'category: team',
+      'severity: must',
+      'content:',
+      '  zh-CN: |',
+      `    ${ruleId}`,
+    ].join('\n'),
+    'utf8',
+  );
+}
 
 async function createTwoAssetSource(rootPath: string, sourceDir: string): Promise<void> {
   const sourceRoot = join(rootPath, sourceDir);

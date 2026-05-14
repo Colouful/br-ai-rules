@@ -170,6 +170,9 @@ async function promptSourceSelection(
   while (true) {
     const promptedSourcePath = await promptSourcePath(defaultSourcePath, runtime);
     if (!promptedSourcePath) {
+      if (defaults.sources && defaults.sources.length > 1 && defaults.sourcePath) {
+        return removeDefaultSource(root, defaults);
+      }
       return { sources: [], sourcePath: null, sourceAssetIds: [] };
     }
 
@@ -183,6 +186,18 @@ async function promptSourceSelection(
         console.warn(`! ${warning}`);
       }
       const availableSourceAssetIds = audit.loaded.assets.map((asset) => asset.id);
+      if (availableSourceAssetIds.length === 0) {
+        console.error(`✗ 规则源没有可用资产: ${promptedSourcePath}`);
+        defaultSourcePath = promptedSourcePath;
+        const action = await promptSourceRetry(runtime);
+        if (action === 'skip') {
+          return { sources: [], sourcePath: null, sourceAssetIds: [] };
+        }
+        if (action === 'exit') {
+          throw new InteractiveInitCancelledError();
+        }
+        continue;
+      }
       const defaultSourceAssetIds = promptedSourcePath === defaults.sourcePath && defaults.sources?.length
         ? defaults.sourceAssetIds.filter((assetId) => availableSourceAssetIds.includes(assetId))
         : availableSourceAssetIds;
@@ -207,6 +222,35 @@ async function promptSourceSelection(
       throw new InteractiveInitCancelledError();
     }
   }
+}
+
+async function removeDefaultSource(root: string, defaults: SourceSelection): Promise<SourceSelection> {
+  const removedPath = defaults.sourcePath;
+  const remainingSources = (defaults.sources ?? []).filter((source) => source.path !== removedPath);
+  const remainingSourceAssetIds = new Set<string>();
+  const failedSources: string[] = [];
+
+  for (const source of remainingSources) {
+    const audit = await auditSourcePath(root, source.path);
+    if (audit.loaded) {
+      for (const asset of audit.loaded.assets) {
+        remainingSourceAssetIds.add(asset.id);
+      }
+      continue;
+    }
+    failedSources.push(source.path);
+  }
+
+  if (failedSources.length > 0) {
+    console.warn(`! 无法校验剩余规则源，已保留原规则源配置: ${failedSources.join(', ')}`);
+    return defaults;
+  }
+
+  return {
+    sources: remainingSources,
+    sourcePath: remainingSources[0]?.type === 'local' ? remainingSources[0].path : null,
+    sourceAssetIds: defaults.sourceAssetIds.filter((assetId) => remainingSourceAssetIds.has(assetId)),
+  };
 }
 
 async function promptSourceRetry(runtime: InitRuntime): Promise<SourceRetryAction> {
