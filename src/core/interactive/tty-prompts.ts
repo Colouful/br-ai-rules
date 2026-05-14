@@ -45,22 +45,23 @@ export async function promptSingleSelect({
   assertOptions(options);
   return new Promise((resolve, reject) => {
     let cursor = 0;
+    let linesWritten = 0;
     const cleanup = startRawKeypress(input, onKeypress, reject);
 
-    renderSingleSelect(output, message, options, cursor);
+    linesWritten = renderSingleSelect(output, message, options, cursor, 0);
 
     function onKeypress(_value: string, key: KeypressKey): void {
       if (handleAbort(key, cleanup, reject)) return;
 
       if (key.name === 'down') {
         cursor = Math.min(cursor + 1, options.length - 1);
-        renderSingleSelect(output, message, options, cursor);
+        linesWritten = renderSingleSelect(output, message, options, cursor, linesWritten);
         return;
       }
 
       if (key.name === 'up') {
         cursor = Math.max(cursor - 1, 0);
-        renderSingleSelect(output, message, options, cursor);
+        linesWritten = renderSingleSelect(output, message, options, cursor, linesWritten);
         return;
       }
 
@@ -88,28 +89,29 @@ export async function promptMultiSelect({
 
   return new Promise((resolve, reject) => {
     let cursor = 0;
+    let linesWritten = 0;
     const cleanup = startRawKeypress(input, onKeypress, reject);
 
-    renderMultiSelect(output, message, options, selected, cursor);
+    linesWritten = renderMultiSelect(output, message, options, selected, cursor, 0);
 
     function onKeypress(_value: string, key: KeypressKey): void {
       if (handleAbort(key, cleanup, reject)) return;
 
       if (key.name === 'down') {
         cursor = Math.min(cursor + 1, options.length - 1);
-        renderMultiSelect(output, message, options, selected, cursor);
+        linesWritten = renderMultiSelect(output, message, options, selected, cursor, linesWritten);
         return;
       }
 
       if (key.name === 'up') {
         cursor = Math.max(cursor - 1, 0);
-        renderMultiSelect(output, message, options, selected, cursor);
+        linesWritten = renderMultiSelect(output, message, options, selected, cursor, linesWritten);
         return;
       }
 
       if (key.name === 'space') {
         applySpace(options[cursor], options, selected);
-        renderMultiSelect(output, message, options, selected, cursor);
+        linesWritten = renderMultiSelect(output, message, options, selected, cursor, linesWritten);
         return;
       }
 
@@ -117,7 +119,7 @@ export async function promptMultiSelect({
         const result = selectedResult(options, selected);
         if (result.length < minSelection) {
           output.write(`至少选择 ${minSelection} 项\n`);
-          renderMultiSelect(output, message, options, selected, cursor);
+          linesWritten = renderMultiSelect(output, message, options, selected, cursor, linesWritten + 1);
           return;
         }
 
@@ -286,11 +288,15 @@ function renderSingleSelect(
   message: string,
   options: PromptOption[],
   cursor: number,
-): void {
-  output.write(`${message}\n`);
+  previousLines: number,
+): number {
+  moveCursorUp(output, previousLines);
+  const lines: string[] = [`${message}`];
   for (const [index, option] of options.entries()) {
-    output.write(`${index === cursor ? '>' : ' '} ${option.label}\n`);
+    lines.push(`${index === cursor ? '>' : ' '} ${option.label}`);
   }
+  output.write(lines.join('\n') + '\n');
+  return lines.length;
 }
 
 function renderMultiSelect(
@@ -299,11 +305,21 @@ function renderMultiSelect(
   options: PromptOption[],
   selected: Set<string>,
   cursor: number,
-): void {
-  output.write(`${message}\n`);
+  previousLines: number,
+): number {
+  moveCursorUp(output, previousLines);
+  const lines: string[] = [`${message}`];
   for (const [index, option] of options.entries()) {
     const marker = isActionOption(option) ? ' ' : selected.has(option.id) ? 'x' : ' ';
-    output.write(`${index === cursor ? '>' : ' '} [${marker}] ${option.label}\n`);
+    lines.push(`${index === cursor ? '>' : ' '} [${marker}] ${option.label}`);
+  }
+  output.write(lines.join('\n') + '\n');
+  return lines.length;
+}
+
+function moveCursorUp(output: PromptOutput, lines: number): void {
+  if (lines > 0) {
+    output.write(`\x1B[${lines}A`);
   }
 }
 
@@ -315,4 +331,8 @@ function assertOptions(options: PromptOption[]): void {
   if (options.length === 0) {
     throw new Error('至少提供一个选项');
   }
+}
+
+export function sanitizeControlChars(value: string): string {
+  return value.replace(/[\x00-\x1F\x7F]/g, '').replace(/\x1B\[[0-9;]*[A-Za-z]/g, '');
 }
