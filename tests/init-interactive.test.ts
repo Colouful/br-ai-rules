@@ -42,6 +42,10 @@ describe('shouldUseInteractiveInit', () => {
     expect(shouldUseInteractiveInit({ stack: 'vue,typescript' }, { isTTY: true })).toBe(false);
   });
 
+  it('does not use interactive mode for sync false because --no-sync is a parameter path', () => {
+    expect(shouldUseInteractiveInit({ sync: false }, { isTTY: true })).toBe(false);
+  });
+
   it('uses interactive mode by default in TTY without selection parameters', () => {
     expect(shouldUseInteractiveInit({}, { isTTY: true })).toBe(true);
   });
@@ -50,9 +54,6 @@ describe('shouldUseInteractiveInit', () => {
     expect(shouldUseInteractiveInit({}, { isTTY: false })).toBe(false);
   });
 
-  it('keeps sync false from disabling default interactive mode in TTY', () => {
-    expect(shouldUseInteractiveInit({ sync: false }, { isTTY: true })).toBe(true);
-  });
 });
 
 describe('init interactive orchestrator', () => {
@@ -134,24 +135,16 @@ describe('init interactive orchestrator', () => {
     expect(config.targets.claude).toBe(false);
   });
 
-  it('uses interactive prompts for sync false in TTY without syncing target files', async () => {
+  it('keeps sync false on the non-interactive parameter path in TTY', async () => {
     const tmpRoot = await createRoot();
 
-    await initCommand({ sync: false }, tmpRoot, {
-      isTTY: true,
-      prompts: {
-        selectAssets: async () => ['base.behavior-basic', 'framework.vue'],
-        selectTargets: async () => ['generic'],
-        sourcePath: async () => null,
-        confirmSummary: async () => true,
-      },
-    });
+    await initCommand({ sync: false }, tmpRoot, { isTTY: true });
 
     const config = await loadConfig(tmpRoot);
-    expect(config.assets.include).toEqual(['base.behavior-basic', 'framework.vue']);
+    expect(config.assets.include).toEqual(['base.behavior-basic']);
     expect(config.targets.generic).toBe(true);
-    expect(config.targets.claude).toBe(false);
-    expect(config.targets.cursor.enabled).toBe(false);
+    expect(config.targets.claude).toBe(true);
+    expect(config.targets.cursor.enabled).toBe(true);
     expect(await exists(join(tmpRoot, 'AGENTS.md'))).toBe(false);
     expect(await exists(join(tmpRoot, 'CLAUDE.md'))).toBe(false);
     expect(await exists(join(tmpRoot, '.cursor/rules/ai-coding.mdc'))).toBe(false);
@@ -188,6 +181,64 @@ describe('init interactive orchestrator', () => {
     expect(config.targets.claude).toBe(false);
     expect(config.targets.cursor.enabled).toBe(true);
     expect(config.targets.cursor.mode).toBe('grouped');
+  });
+
+  it('preserves existing multi-source config when source prompt is skipped during reconfigure', async () => {
+    const tmpRoot = await createRoot();
+    const existing = defaultConfig();
+    existing.sources = [
+      { type: 'local', path: './one' },
+      { type: 'local', path: './two' },
+    ];
+    existing.assets.include = ['base.behavior-basic', 'team.one', 'team.two'];
+    await mkdir(join(tmpRoot, '.ai-rules'), { recursive: true });
+    await writeFile(join(tmpRoot, '.ai-rules/config.json'), `${JSON.stringify(existing, null, 2)}\n`, 'utf8');
+
+    await initCommand({ interactive: true, sync: false }, tmpRoot, {
+      isTTY: true,
+      prompts: {
+        existingConfigAction: async () => 'reconfigure',
+        selectAssets: async () => ['base.behavior-basic'],
+        selectTargets: async () => ['generic'],
+        sourcePath: async () => null,
+        confirmSummary: async () => true,
+      },
+    });
+
+    const config = await loadConfig(tmpRoot);
+    expect(config.sources).toEqual([
+      { type: 'local', path: './one' },
+      { type: 'local', path: './two' },
+    ]);
+    expect(config.assets.include).toEqual(['base.behavior-basic', 'team.one', 'team.two']);
+  });
+
+  it('uses existing source asset subset as defaults when reconfiguring an existing source', async () => {
+    const tmpRoot = await createRoot();
+    await createTwoAssetSource(tmpRoot, 'team-source');
+    const existing = defaultConfig();
+    existing.sources = [{ type: 'local', path: 'team-source' }];
+    existing.assets.include = ['base.behavior-basic', 'team.one'];
+    await mkdir(join(tmpRoot, '.ai-rules'), { recursive: true });
+    await writeFile(join(tmpRoot, '.ai-rules/config.json'), `${JSON.stringify(existing, null, 2)}\n`, 'utf8');
+    const selectSourceAssets = vi.fn(async (_assets: string[], defaults: string[]) => defaults);
+
+    await initCommand({ interactive: true, sync: false }, tmpRoot, {
+      isTTY: true,
+      prompts: {
+        existingConfigAction: async () => 'reconfigure',
+        selectAssets: async () => ['base.behavior-basic'],
+        selectTargets: async () => ['generic'],
+        sourcePath: async () => 'team-source',
+        selectSourceAssets,
+        confirmSummary: async () => true,
+      },
+    });
+
+    const config = await loadConfig(tmpRoot);
+    expect(selectSourceAssets).toHaveBeenCalledWith(['team.one', 'team.two'], ['team.one']);
+    expect(config.sources).toEqual([{ type: 'local', path: 'team-source' }]);
+    expect(config.assets.include).toEqual(['base.behavior-basic', 'team.one']);
   });
 
   it('retries injected source path after invalid path and skips when second answer is null', async () => {
@@ -248,3 +299,40 @@ describe('init interactive orchestrator', () => {
     await expect(readFile(join(tmpRoot, '.ai-rules/config.json'), 'utf8')).rejects.toMatchObject({ code: 'ENOENT' });
   });
 });
+
+async function createTwoAssetSource(rootPath: string, sourceDir: string): Promise<void> {
+  const sourceRoot = join(rootPath, sourceDir);
+  await mkdir(join(sourceRoot, 'assets'), { recursive: true });
+  await mkdir(join(sourceRoot, 'rules'), { recursive: true });
+  await writeFile(
+    join(sourceRoot, 'br-rules.source.json'),
+    JSON.stringify({ name: 'team-rules', version: '1.0.0', assets: ['team.one', 'team.two'] }, null, 2),
+    'utf8',
+  );
+  for (const id of ['one', 'two']) {
+    await writeFile(
+      join(sourceRoot, 'assets', `team.${id}.yaml`),
+      [
+        `id: team.${id}`,
+        `name: Team ${id}`,
+        'layer: team',
+        'rules:',
+        `  - team.${id}.rule`,
+      ].join('\n'),
+      'utf8',
+    );
+    await writeFile(
+      join(sourceRoot, 'rules', `team.${id}.rule.yaml`),
+      [
+        `id: team.${id}.rule`,
+        `name: Team ${id} Rule`,
+        'category: team',
+        'severity: must',
+        'content:',
+        '  zh-CN: |',
+        `    team ${id} rule`,
+      ].join('\n'),
+      'utf8',
+    );
+  }
+}

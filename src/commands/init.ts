@@ -39,7 +39,7 @@ export type InitRuntime = {
     selectTargets: (defaults: TargetId[]) => Promise<TargetId[]>;
     sourcePath: () => Promise<string | null>;
     sourceRetryAction: () => Promise<SourceRetryAction>;
-    selectSourceAssets: (assets: string[]) => Promise<string[]>;
+    selectSourceAssets: (assets: string[], defaults: string[]) => Promise<string[]>;
     confirmSummary: (selection: InteractiveInitSelection) => Promise<boolean>;
   }>;
 };
@@ -170,7 +170,11 @@ async function promptSourceSelection(
   while (true) {
     const promptedSourcePath = await promptSourcePath(defaultSourcePath, runtime);
     if (!promptedSourcePath) {
-      return { sources: [], sourcePath: null, sourceAssetIds: [] };
+      return defaults.sources?.length ? defaults : { sources: [], sourcePath: null, sourceAssetIds: [] };
+    }
+
+    if (promptedSourcePath === defaults.sourcePath && defaults.sources && defaults.sources.length > 1) {
+      return defaults;
     }
 
     const audit = await auditSourcePath(root, promptedSourcePath);
@@ -179,7 +183,10 @@ async function promptSourceSelection(
         console.warn(`! ${warning}`);
       }
       const availableSourceAssetIds = audit.loaded.assets.map((asset) => asset.id);
-      const sourceAssetIds = await promptSourceAssets(availableSourceAssetIds, runtime);
+      const defaultSourceAssetIds = promptedSourcePath === defaults.sourcePath && defaults.sources?.length
+        ? defaults.sourceAssetIds.filter((assetId) => availableSourceAssetIds.includes(assetId))
+        : availableSourceAssetIds;
+      const sourceAssetIds = await promptSourceAssets(availableSourceAssetIds, defaultSourceAssetIds, runtime);
       return {
         sources: [{ type: 'local', path: promptedSourcePath }],
         sourcePath: promptedSourcePath,
@@ -215,7 +222,7 @@ function resolveIsTTY(runtime: InitRuntime): boolean {
 }
 
 function hasSelectionParam(options: InitOptions): boolean {
-  return Boolean(options.language || options.targets || options.stack || options.source || options.asset);
+  return Boolean(options.language || options.targets || options.stack || options.source || options.asset || options.sync === false);
 }
 
 function mergeInteractiveConfig(existingConfig: RulesConfig | null, selectedConfig: RulesConfig): RulesConfig {
@@ -372,16 +379,16 @@ async function promptSourcePath(defaultSourcePath: string | null, runtime: InitR
   return value || defaultSourcePath;
 }
 
-async function promptSourceAssets(assets: string[], runtime: InitRuntime): Promise<string[]> {
+async function promptSourceAssets(assets: string[], defaults: string[], runtime: InitRuntime): Promise<string[]> {
   if (runtime.prompts?.selectSourceAssets) {
-    return runtime.prompts.selectSourceAssets(assets);
+    return runtime.prompts.selectSourceAssets(assets, defaults);
   }
 
   if (assets.length === 0) return [];
   return promptMultiSelect({
     message: '请选择外部规则源资产',
     options: assets.map((asset) => ({ id: asset, label: asset })),
-    selectedIds: assets,
+    selectedIds: defaults,
   });
 }
 
