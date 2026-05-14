@@ -13,6 +13,7 @@ import {
   promptMultiSelect,
   promptSingleSelect,
   promptText,
+  sanitizeControlChars,
   type PromptOption,
 } from '../core/interactive/tty-prompts.js';
 import { syncCommand } from './sync.js';
@@ -114,7 +115,10 @@ async function runInteractiveInit(options: InitOptions, root: string, runtime: I
   try {
     await executeInteractiveInit(options, root, runtime);
   } catch (error) {
-    if (isInteractiveInitCancelled(error)) return;
+    if (isInteractiveInitCancelled(error)) {
+      console.log('已取消，未写入配置');
+      return;
+    }
     throw error;
   }
 }
@@ -183,11 +187,11 @@ async function promptSourceSelection(
     const audit = await auditSourcePath(root, promptedSourcePath);
     if (audit.errors.length === 0 && audit.loaded) {
       for (const warning of audit.warnings) {
-        console.warn(`! ${warning}`);
+        console.warn(`! ${sanitizeControlChars(warning)}`);
       }
       const availableSourceAssetIds = audit.loaded.assets.map((asset) => asset.id);
       if (availableSourceAssetIds.length === 0) {
-        console.error(`✗ 规则源没有可用资产: ${promptedSourcePath}`);
+        console.error(`✗ 规则源没有可用资产: ${sanitizeControlChars(promptedSourcePath)}`);
         defaultSourcePath = promptedSourcePath;
         const action = await promptSourceRetry(runtime);
         if (action === 'skip') {
@@ -198,6 +202,24 @@ async function promptSourceSelection(
         }
         continue;
       }
+
+      // Trust boundary: confirm before accepting external source rules
+      const isExistingSource = promptedSourcePath === defaults.sourcePath && defaults.sources?.length;
+      if (!isExistingSource) {
+        const resolvedPath = audit.loaded.resolvedPath;
+        console.warn(`! 规则源内容将写入 AGENTS.md / CLAUDE.md / Cursor Rules，来源: ${sanitizeControlChars(resolvedPath)}`);
+        const trustConfirm = await promptSingleSelect({
+          message: '是否信任该规则源？',
+          options: [
+            { id: 'trust', label: '信任并继续' },
+            { id: 'skip', label: '跳过该规则源' },
+          ],
+        });
+        if (trustConfirm === 'skip') {
+          return { sources: [], sourcePath: null, sourceAssetIds: [] };
+        }
+      }
+
       const defaultSourceAssetIds = promptedSourcePath === defaults.sourcePath && defaults.sources?.length
         ? defaults.sourceAssetIds.filter((assetId) => availableSourceAssetIds.includes(assetId))
         : availableSourceAssetIds;
@@ -210,7 +232,7 @@ async function promptSourceSelection(
     }
 
     for (const error of audit.errors) {
-      console.error(`✗ ${error}`);
+      console.error(`✗ ${sanitizeControlChars(error)}`);
     }
 
     defaultSourcePath = promptedSourcePath;
@@ -420,16 +442,17 @@ async function promptSourcePath(defaultSourcePath: string | null, runtime: InitR
     });
     if (action === 'keep') return defaultSourcePath;
     if (action === 'remove') return null;
+    // action === 'input': fall through to promptText directly
+  } else {
+    const action = await promptSingleSelect({
+      message: '是否接入团队规则源？',
+      options: [
+        { id: 'skip', label: '不接入团队规则源' },
+        { id: 'input', label: '输入 source(规则源) 路径' },
+      ],
+    });
+    if (action === 'skip') return null;
   }
-
-  const action = await promptSingleSelect({
-    message: '是否接入团队规则源？',
-    options: [
-      { id: 'skip', label: '不接入团队规则源' },
-      { id: 'input', label: '输入 source(规则源) 路径' },
-    ],
-  });
-  if (action === 'skip') return null;
 
   const suffix = defaultSourcePath ? `（默认 ${defaultSourcePath}，留空使用默认）` : '';
   const value = await promptText({ message: `请输入 source(规则源) 路径${suffix}` });
@@ -444,8 +467,9 @@ async function promptSourceAssets(assets: string[], defaults: string[], runtime:
   if (assets.length === 0) return [];
   return promptMultiSelect({
     message: '请选择外部规则源资产',
-    options: assets.map((asset) => ({ id: asset, label: asset })),
+    options: assets.map((asset) => ({ id: asset, label: sanitizeControlChars(asset) })),
     selectedIds: defaults,
+    minSelection: 1,
   });
 }
 
@@ -454,14 +478,14 @@ async function promptConfirmSummary(selection: InteractiveInitSelection, runtime
     return runtime.prompts.confirmSummary(selection);
   }
 
-  console.log(`language: ${selection.language}`);
-  console.log(`assetIds: ${formatList(selection.assetIds)}`);
-  console.log(`sourcePath: ${selection.sourcePath ?? '无'}`);
-  console.log(`sourceAssetIds: ${formatList(selection.sourceAssetIds)}`);
+  console.log(`language: ${sanitizeControlChars(selection.language)}`);
+  console.log(`assetIds: ${formatList(selection.assetIds.map(sanitizeControlChars))}`);
+  console.log(`sourcePath: ${selection.sourcePath ? sanitizeControlChars(selection.sourcePath) : '无'}`);
+  console.log(`sourceAssetIds: ${formatList(selection.sourceAssetIds.map(sanitizeControlChars))}`);
   console.log(`targets: ${formatList(selection.targets)}`);
   console.log(`sync: ${selection.sync ? 'true' : 'false'}`);
-  console.log(`evidence: ${formatList(selection.evidence)}`);
-  console.log(`sources: ${selection.sources?.length ? selection.sources.map(formatSource).join(', ') : '无'}`);
+  console.log(`evidence: ${formatList(selection.evidence.map(sanitizeControlChars))}`);
+  console.log(`sources: ${selection.sources?.length ? selection.sources.map((s) => sanitizeControlChars(formatSource(s))).join(', ') : '无'}`);
   const value = await promptSingleSelect({
     message: '确认写入配置？',
     options: [
@@ -482,7 +506,7 @@ function groupedAssetOptions(assets: Asset[], groupLabel: string): PromptOption[
     { id: `${groupLabel}:clear`, label: '清空当前分组', kind: 'action', action: 'clear' },
     ...assets.map((asset) => ({
       id: asset.id,
-      label: `${asset.name} (${asset.id})`,
+      label: sanitizeControlChars(`${asset.name} (${asset.id})`),
     })),
   ];
 }
