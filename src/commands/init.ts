@@ -127,6 +127,8 @@ async function initInteractive(options: InitOptions, root: string, runtime: Init
       for (const error of audit.errors) {
         console.error(`✗ ${error}`);
       }
+      sources = [];
+      sourceAssetIds = [];
     } else {
       sourcePath = promptedSourcePath;
       sources = [{ type: 'local', path: promptedSourcePath }];
@@ -148,7 +150,8 @@ async function initInteractive(options: InitOptions, root: string, runtime: Init
 
   if (!await promptConfirmSummary(selection, runtime)) return;
 
-  await writeConfig(root, buildInitConfigFromSelection(selection));
+  const nextConfig = mergeInteractiveConfig(existingConfig, buildInitConfigFromSelection(selection));
+  await writeConfig(root, nextConfig);
   console.log('Created .ai-rules/config.json');
   if (options.sync !== false) await syncCommand(root);
 }
@@ -158,7 +161,30 @@ function resolveIsTTY(runtime: InitRuntime): boolean {
 }
 
 function hasSelectionParam(options: InitOptions): boolean {
-  return Boolean(options.language || options.targets || options.stack || options.source || options.asset || options.sync === false);
+  return Boolean(options.language || options.targets || options.stack || options.source || options.asset);
+}
+
+function mergeInteractiveConfig(existingConfig: RulesConfig | null, selectedConfig: RulesConfig): RulesConfig {
+  if (!existingConfig) return selectedConfig;
+
+  return {
+    ...existingConfig,
+    language: selectedConfig.language,
+    sources: selectedConfig.sources,
+    assets: {
+      ...existingConfig.assets,
+      include: selectedConfig.assets.include,
+    },
+    targets: {
+      ...existingConfig.targets,
+      generic: selectedConfig.targets.generic,
+      claude: selectedConfig.targets.claude,
+      cursor: {
+        ...existingConfig.targets.cursor,
+        enabled: selectedConfig.targets.cursor.enabled,
+      },
+    },
+  };
 }
 
 function parseParamDefaults(options: InitOptions): ParamDefaults {
