@@ -28,7 +28,7 @@ export type InitOptions = {
 };
 
 export type ExistingConfigAction = 'reconfigure' | 'sync-only' | 'exit';
-type SourceRetryAction = 'retry' | 'skip' | 'exit';
+export type SourceRetryAction = 'retry' | 'skip' | 'exit';
 type SourceSelection = Pick<InteractiveInitSelection, 'sources' | 'sourcePath' | 'sourceAssetIds'>;
 
 export type InitRuntime = {
@@ -38,6 +38,7 @@ export type InitRuntime = {
     selectAssets: (defaults: string[]) => Promise<string[]>;
     selectTargets: (defaults: TargetId[]) => Promise<TargetId[]>;
     sourcePath: () => Promise<string | null>;
+    sourceRetryAction: () => Promise<SourceRetryAction>;
     selectSourceAssets: (assets: string[]) => Promise<string[]>;
     confirmSummary: (selection: InteractiveInitSelection) => Promise<boolean>;
   }>;
@@ -106,15 +107,19 @@ async function initWithParams(options: InitOptions, root: string): Promise<void>
 }
 
 async function initInteractive(options: InitOptions, root: string, runtime: InitRuntime): Promise<void> {
+  await runInteractiveInit(options, root, runtime);
+}
+
+async function runInteractiveInit(options: InitOptions, root: string, runtime: InitRuntime): Promise<void> {
   try {
-    await runInteractiveInit(options, root, runtime);
+    await executeInteractiveInit(options, root, runtime);
   } catch (error) {
     if (isInteractiveInitCancelled(error)) return;
     throw error;
   }
 }
 
-async function runInteractiveInit(options: InitOptions, root: string, runtime: InitRuntime): Promise<void> {
+async function executeInteractiveInit(options: InitOptions, root: string, runtime: InitRuntime): Promise<void> {
   const existingConfig = await readExistingConfig(root);
   if (existingConfig) {
     const action = await promptExistingConfigAction(runtime);
@@ -187,11 +192,7 @@ async function promptSourceSelection(
     }
 
     defaultSourcePath = promptedSourcePath;
-    if (runtime.prompts?.sourcePath) {
-      continue;
-    }
-
-    const action = await promptSourceRetryAction();
+    const action = await promptSourceRetry(runtime);
     if (action === 'skip') {
       return { sources: [], sourcePath: null, sourceAssetIds: [] };
     }
@@ -199,6 +200,14 @@ async function promptSourceSelection(
       throw new InteractiveInitCancelledError();
     }
   }
+}
+
+async function promptSourceRetry(runtime: InitRuntime): Promise<SourceRetryAction> {
+  if (runtime.prompts?.sourceRetryAction) {
+    return runtime.prompts.sourceRetryAction();
+  }
+
+  return promptSourceRetryAction();
 }
 
 function resolveIsTTY(runtime: InitRuntime): boolean {

@@ -197,6 +197,7 @@ describe('init interactive orchestrator', () => {
       .fn<() => Promise<string | null>>()
       .mockResolvedValueOnce('missing-source')
       .mockResolvedValueOnce(null);
+    const sourceRetryAction = vi.fn<() => Promise<'retry' | 'skip' | 'exit'>>().mockResolvedValue('retry');
 
     await initCommand({ interactive: true, asset: 'team.bad-source-pack', sync: false }, tmpRoot, {
       isTTY: true,
@@ -204,14 +205,46 @@ describe('init interactive orchestrator', () => {
         selectAssets: async () => ['base.behavior-basic'],
         selectTargets: async () => ['generic'],
         sourcePath: sourcePathPrompt,
+        sourceRetryAction,
         confirmSummary: async () => true,
       },
     });
 
     const config = await loadConfig(tmpRoot);
     expect(sourcePathPrompt).toHaveBeenCalledTimes(2);
+    expect(sourceRetryAction).toHaveBeenCalledTimes(1);
     expect(errorSpy).toHaveBeenCalledWith('✗ Source path not found: missing-source');
     expect(config.sources).toEqual([]);
     expect(config.assets.include).toEqual(['base.behavior-basic']);
+  });
+
+  it('exits without writing config when injected invalid source path chooses exit', async () => {
+    const tmpRoot = await createRoot();
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const sourceRetryAction = vi.fn<() => Promise<'retry' | 'skip' | 'exit'>>().mockResolvedValue('exit');
+    const sourcePathPrompt = vi.fn<() => Promise<string | null>>(async () => {
+      if (sourcePathPrompt.mock.calls.length > 1) {
+        throw new Error('sourcePath should not be called again after exit');
+      }
+      return 'missing-source';
+    });
+
+    await initCommand({ interactive: true, sync: false }, tmpRoot, {
+      isTTY: true,
+      prompts: {
+        selectAssets: async () => ['base.behavior-basic'],
+        selectTargets: async () => ['generic'],
+        sourcePath: sourcePathPrompt,
+        sourceRetryAction,
+        confirmSummary: async () => {
+          throw new Error('confirmSummary should not run after exit');
+        },
+      },
+    });
+
+    expect(sourcePathPrompt).toHaveBeenCalledTimes(1);
+    expect(sourceRetryAction).toHaveBeenCalledTimes(1);
+    expect(errorSpy).toHaveBeenCalledWith('✗ Source path not found: missing-source');
+    await expect(readFile(join(tmpRoot, '.ai-rules/config.json'), 'utf8')).rejects.toMatchObject({ code: 'ENOENT' });
   });
 });
