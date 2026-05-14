@@ -183,7 +183,7 @@ describe('init interactive orchestrator', () => {
     expect(config.targets.cursor.mode).toBe('grouped');
   });
 
-  it('preserves existing multi-source config when source prompt is skipped during reconfigure', async () => {
+  it('preserves existing multi-source config when keeping the default source during reconfigure', async () => {
     const tmpRoot = await createRoot();
     const existing = defaultConfig();
     existing.sources = [
@@ -200,7 +200,7 @@ describe('init interactive orchestrator', () => {
         existingConfigAction: async () => 'reconfigure',
         selectAssets: async () => ['base.behavior-basic'],
         selectTargets: async () => ['generic'],
-        sourcePath: async () => null,
+        sourcePath: async () => './one',
         confirmSummary: async () => true,
       },
     });
@@ -211,6 +211,30 @@ describe('init interactive orchestrator', () => {
       { type: 'local', path: './two' },
     ]);
     expect(config.assets.include).toEqual(['base.behavior-basic', 'team.one', 'team.two']);
+  });
+
+  it('removes existing source config when source prompt returns null during reconfigure', async () => {
+    const tmpRoot = await createRoot();
+    const existing = defaultConfig();
+    existing.sources = [{ type: 'local', path: './team-source' }];
+    existing.assets.include = ['base.behavior-basic', 'team.one'];
+    await mkdir(join(tmpRoot, '.ai-rules'), { recursive: true });
+    await writeFile(join(tmpRoot, '.ai-rules/config.json'), `${JSON.stringify(existing, null, 2)}\n`, 'utf8');
+
+    await initCommand({ interactive: true, sync: false }, tmpRoot, {
+      isTTY: true,
+      prompts: {
+        existingConfigAction: async () => 'reconfigure',
+        selectAssets: async () => ['base.behavior-basic'],
+        selectTargets: async () => ['generic'],
+        sourcePath: async () => null,
+        confirmSummary: async () => true,
+      },
+    });
+
+    const config = await loadConfig(tmpRoot);
+    expect(config.sources).toEqual([]);
+    expect(config.assets.include).toEqual(['base.behavior-basic']);
   });
 
   it('uses existing source asset subset as defaults when reconfiguring an existing source', async () => {

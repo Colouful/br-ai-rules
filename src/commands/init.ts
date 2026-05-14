@@ -170,7 +170,7 @@ async function promptSourceSelection(
   while (true) {
     const promptedSourcePath = await promptSourcePath(defaultSourcePath, runtime);
     if (!promptedSourcePath) {
-      return defaults.sources?.length ? defaults : { sources: [], sourcePath: null, sourceAssetIds: [] };
+      return { sources: [], sourcePath: null, sourceAssetIds: [] };
     }
 
     if (promptedSourcePath === defaults.sourcePath && defaults.sources && defaults.sources.length > 1) {
@@ -365,10 +365,23 @@ async function promptSourcePath(defaultSourcePath: string | null, runtime: InitR
     return runtime.prompts.sourcePath();
   }
 
+  if (defaultSourcePath) {
+    const action = await promptSingleSelect({
+      message: '是否接入团队规则源？',
+      options: [
+        { id: 'keep', label: '保留当前团队规则源' },
+        { id: 'remove', label: '移除/不接入团队规则源' },
+        { id: 'input', label: '输入新的 source(规则源) 路径' },
+      ],
+    });
+    if (action === 'keep') return defaultSourcePath;
+    if (action === 'remove') return null;
+  }
+
   const action = await promptSingleSelect({
     message: '是否接入团队规则源？',
     options: [
-      { id: 'skip', label: '跳过团队规则源' },
+      { id: 'skip', label: '不接入团队规则源' },
       { id: 'input', label: '输入 source(规则源) 路径' },
     ],
   });
