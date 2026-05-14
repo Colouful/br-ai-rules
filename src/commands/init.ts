@@ -1,5 +1,5 @@
 import { defaultConfig, loadConfig, writeConfig, type RulesConfig, type SourceConfig } from '../core/config.js';
-import { loadBuiltInAssets, resolveStacksToAssets } from '../core/assets.js';
+import { loadBuiltInAssets, resolveStacksToAssets, type Asset } from '../core/assets.js';
 import { auditSourcePath } from '../core/source.js';
 import { detectProject } from '../core/interactive/project-detector.js';
 import {
@@ -28,6 +28,8 @@ export type InitOptions = {
 };
 
 export type ExistingConfigAction = 'reconfigure' | 'sync-only' | 'exit';
+type SourceRetryAction = 'retry' | 'skip' | 'exit';
+type SourceSelection = Pick<InteractiveInitSelection, 'sources' | 'sourcePath' | 'sourceAssetIds'>;
 
 export type InitRuntime = {
   isTTY?: boolean;
@@ -42,6 +44,13 @@ export type InitRuntime = {
 };
 
 const TARGET_IDS: TargetId[] = ['generic', 'claude', 'cursor'];
+const BASE_ASSET_ID = 'base.behavior-basic';
+const BUILT_IN_ASSET_GROUPS = [
+  { layer: 'language', label: '语言' },
+  { layer: 'framework', label: '框架' },
+  { layer: 'middleware', label: '中间件' },
+  { layer: 'practice', label: '工程实践' },
+] as const;
 
 export function shouldUseInteractiveInit(options: InitOptions, runtime: InitRuntime = {}): boolean {
   const isTTY = resolveIsTTY(runtime);
@@ -97,6 +106,15 @@ async function initWithParams(options: InitOptions, root: string): Promise<void>
 }
 
 async function initInteractive(options: InitOptions, root: string, runtime: InitRuntime): Promise<void> {
+  try {
+    await runInteractiveInit(options, root, runtime);
+  } catch (error) {
+    if (isInteractiveInitCancelled(error)) return;
+    throw error;
+  }
+}
+
+async function runInteractiveInit(options: InitOptions, root: string, runtime: InitRuntime): Promise<void> {
   const existingConfig = await readExistingConfig(root);
   if (existingConfig) {
     const action = await promptExistingConfigAction(runtime);
@@ -116,33 +134,14 @@ async function initInteractive(options: InitOptions, root: string, runtime: Init
 
   const assetIds = await promptAssets(defaults.assetIds, runtime);
   const targets = await promptTargets(defaults.targets, runtime);
-  const promptedSourcePath = await promptSourcePath(defaults.sourcePath, runtime);
-  let sources = defaults.sources;
-  let sourcePath: string | null = null;
-  let sourceAssetIds = defaults.sourceAssetIds;
-
-  if (promptedSourcePath) {
-    const audit = await auditSourcePath(root, promptedSourcePath);
-    if (audit.errors.length > 0 || !audit.loaded) {
-      for (const error of audit.errors) {
-        console.error(`✗ ${error}`);
-      }
-      sources = [];
-      sourceAssetIds = [];
-    } else {
-      sourcePath = promptedSourcePath;
-      sources = [{ type: 'local', path: promptedSourcePath }];
-      const availableSourceAssetIds = audit.loaded.assets.map((asset) => asset.id);
-      sourceAssetIds = await promptSourceAssets(availableSourceAssetIds, runtime);
-    }
-  }
+  const sourceSelection = await promptSourceSelection(root, defaults, runtime);
 
   const selection: InteractiveInitSelection = {
     language: defaults.language,
     assetIds,
-    sources,
-    sourcePath,
-    sourceAssetIds,
+    sources: sourceSelection.sources,
+    sourcePath: sourceSelection.sourcePath,
+    sourceAssetIds: sourceSelection.sourceAssetIds,
     targets,
     sync: options.sync !== false,
     evidence: defaults.evidence,
@@ -154,6 +153,52 @@ async function initInteractive(options: InitOptions, root: string, runtime: Init
   await writeConfig(root, nextConfig);
   console.log('Created .ai-rules/config.json');
   if (options.sync !== false) await syncCommand(root);
+}
+
+async function promptSourceSelection(
+  root: string,
+  defaults: SourceSelection,
+  runtime: InitRuntime,
+): Promise<SourceSelection> {
+  let defaultSourcePath = defaults.sourcePath;
+
+  while (true) {
+    const promptedSourcePath = await promptSourcePath(defaultSourcePath, runtime);
+    if (!promptedSourcePath) {
+      return { sources: [], sourcePath: null, sourceAssetIds: [] };
+    }
+
+    const audit = await auditSourcePath(root, promptedSourcePath);
+    if (audit.errors.length === 0 && audit.loaded) {
+      for (const warning of audit.warnings) {
+        console.warn(`! ${warning}`);
+      }
+      const availableSourceAssetIds = audit.loaded.assets.map((asset) => asset.id);
+      const sourceAssetIds = await promptSourceAssets(availableSourceAssetIds, runtime);
+      return {
+        sources: [{ type: 'local', path: promptedSourcePath }],
+        sourcePath: promptedSourcePath,
+        sourceAssetIds,
+      };
+    }
+
+    for (const error of audit.errors) {
+      console.error(`✗ ${error}`);
+    }
+
+    defaultSourcePath = promptedSourcePath;
+    if (runtime.prompts?.sourcePath) {
+      continue;
+    }
+
+    const action = await promptSourceRetryAction();
+    if (action === 'skip') {
+      return { sources: [], sourcePath: null, sourceAssetIds: [] };
+    }
+    if (action === 'exit') {
+      throw new InteractiveInitCancelledError();
+    }
+  }
 }
 
 function resolveIsTTY(runtime: InitRuntime): boolean {
@@ -254,18 +299,28 @@ async function promptAssets(defaults: string[], runtime: InitRuntime): Promise<s
   }
 
   const assets = await loadBuiltInAssets();
-  const options: PromptOption[] = assets.map((asset) => ({
-    id: asset.id,
-    label: `${asset.name} (${asset.id})`,
-    locked: asset.id === 'base.behavior-basic',
-  }));
+  const selected = new Set<string>(defaults);
+  selected.add(BASE_ASSET_ID);
 
-  return promptMultiSelect({
-    message: '请选择内置规则资产',
-    options,
-    selectedIds: defaults,
-    minSelection: 1,
-  });
+  for (const group of BUILT_IN_ASSET_GROUPS) {
+    const groupAssets = assets.filter((asset) => asset.layer === group.layer);
+    if (groupAssets.length === 0) continue;
+
+    const groupSelected = await promptMultiSelect({
+      message: `请选择${group.label}规则资产`,
+      options: groupedAssetOptions(groupAssets, group.label),
+      selectedIds: groupAssets.filter((asset) => selected.has(asset.id)).map((asset) => asset.id),
+    });
+
+    for (const asset of groupAssets) {
+      selected.delete(asset.id);
+    }
+    for (const assetId of groupSelected) {
+      selected.add(assetId);
+    }
+  }
+
+  return unique([BASE_ASSET_ID, ...assets.filter((asset) => selected.has(asset.id)).map((asset) => asset.id)]);
 }
 
 async function promptTargets(defaults: TargetId[], runtime: InitRuntime): Promise<TargetId[]> {
@@ -276,6 +331,8 @@ async function promptTargets(defaults: TargetId[], runtime: InitRuntime): Promis
   const selected = await promptMultiSelect({
     message: '请选择输出目标',
     options: [
+      { id: 'targets:select-all', label: '全选当前分组', kind: 'action', action: 'select-all' },
+      { id: 'targets:clear', label: '清空当前分组', kind: 'action', action: 'clear' },
       { id: 'generic', label: 'AGENTS.md' },
       { id: 'claude', label: 'CLAUDE.md' },
       { id: 'cursor', label: 'Cursor Rules' },
@@ -292,9 +349,18 @@ async function promptSourcePath(defaultSourcePath: string | null, runtime: InitR
     return runtime.prompts.sourcePath();
   }
 
-  const suffix = defaultSourcePath ? `（默认 ${defaultSourcePath}，留空保留）` : '（可留空）';
-  const value = await promptText({ message: `请输入本地规则源路径 ${suffix}` });
-  return value || null;
+  const action = await promptSingleSelect({
+    message: '是否接入团队规则源？',
+    options: [
+      { id: 'skip', label: '跳过团队规则源' },
+      { id: 'input', label: '输入 source(规则源) 路径' },
+    ],
+  });
+  if (action === 'skip') return null;
+
+  const suffix = defaultSourcePath ? `（默认 ${defaultSourcePath}，留空使用默认）` : '';
+  const value = await promptText({ message: `请输入 source(规则源) 路径${suffix}` });
+  return value || defaultSourcePath;
 }
 
 async function promptSourceAssets(assets: string[], runtime: InitRuntime): Promise<string[]> {
@@ -315,16 +381,18 @@ async function promptConfirmSummary(selection: InteractiveInitSelection, runtime
     return runtime.prompts.confirmSummary(selection);
   }
 
-  console.log(`语言：${selection.language}`);
-  console.log(`规则资产：${selection.assetIds.join(', ')}`);
-  console.log(`输出目标：${selection.targets.join(', ')}`);
-  if (selection.sources?.length) {
-    console.log(`规则源：${selection.sources.map(formatSource).join(', ')}`);
-  }
+  console.log(`language: ${selection.language}`);
+  console.log(`assetIds: ${formatList(selection.assetIds)}`);
+  console.log(`sourcePath: ${selection.sourcePath ?? '无'}`);
+  console.log(`sourceAssetIds: ${formatList(selection.sourceAssetIds)}`);
+  console.log(`targets: ${formatList(selection.targets)}`);
+  console.log(`sync: ${selection.sync ? 'true' : 'false'}`);
+  console.log(`evidence: ${formatList(selection.evidence)}`);
+  console.log(`sources: ${selection.sources?.length ? selection.sources.map(formatSource).join(', ') : '无'}`);
   const value = await promptSingleSelect({
     message: '确认写入配置？',
     options: [
-      { id: 'yes', label: '确认' },
+      { id: 'yes', label: '确认写入' },
       { id: 'no', label: '取消' },
     ],
   });
@@ -333,4 +401,45 @@ async function promptConfirmSummary(selection: InteractiveInitSelection, runtime
 
 function formatSource(source: SourceConfig): string {
   return source.path;
+}
+
+function groupedAssetOptions(assets: Asset[], groupLabel: string): PromptOption[] {
+  return [
+    { id: `${groupLabel}:select-all`, label: '全选当前分组', kind: 'action', action: 'select-all' },
+    { id: `${groupLabel}:clear`, label: '清空当前分组', kind: 'action', action: 'clear' },
+    ...assets.map((asset) => ({
+      id: asset.id,
+      label: `${asset.name} (${asset.id})`,
+    })),
+  ];
+}
+
+async function promptSourceRetryAction(): Promise<SourceRetryAction> {
+  const value = await promptSingleSelect({
+    message: '规则源校验失败，请选择下一步',
+    options: [
+      { id: 'retry', label: '重新输入' },
+      { id: 'skip', label: '跳过团队规则源' },
+      { id: 'exit', label: '退出向导' },
+    ],
+  });
+  return value as SourceRetryAction;
+}
+
+function formatList(values: string[]): string {
+  return values.length > 0 ? values.join(', ') : '无';
+}
+
+function unique<T>(values: T[]): T[] {
+  return [...new Set(values)];
+}
+
+class InteractiveInitCancelledError extends Error {
+  constructor() {
+    super('交互式初始化已取消');
+  }
+}
+
+function isInteractiveInitCancelled(error: unknown): boolean {
+  return error instanceof InteractiveInitCancelledError;
 }

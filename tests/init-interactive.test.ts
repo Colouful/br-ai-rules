@@ -190,21 +190,26 @@ describe('init interactive orchestrator', () => {
     expect(config.targets.cursor.mode).toBe('grouped');
   });
 
-  it('skips invalid source path and does not write source assets', async () => {
+  it('retries injected source path after invalid path and skips when second answer is null', async () => {
     const tmpRoot = await createRoot();
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const sourcePathPrompt = vi
+      .fn<() => Promise<string | null>>()
+      .mockResolvedValueOnce('missing-source')
+      .mockResolvedValueOnce(null);
 
     await initCommand({ interactive: true, asset: 'team.bad-source-pack', sync: false }, tmpRoot, {
       isTTY: true,
       prompts: {
         selectAssets: async () => ['base.behavior-basic'],
         selectTargets: async () => ['generic'],
-        sourcePath: async () => 'missing-source',
+        sourcePath: sourcePathPrompt,
         confirmSummary: async () => true,
       },
     });
 
     const config = await loadConfig(tmpRoot);
+    expect(sourcePathPrompt).toHaveBeenCalledTimes(2);
     expect(errorSpy).toHaveBeenCalledWith('✗ Source path not found: missing-source');
     expect(config.sources).toEqual([]);
     expect(config.assets.include).toEqual(['base.behavior-basic']);

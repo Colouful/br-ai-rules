@@ -82,7 +82,7 @@ br-rules init
 ## Commands
 
 ```bash
-br-rules init [--stack <stacks>] [--no-sync] [--language <lang>] [--targets <targets>]
+br-rules init [--interactive] [--stack <stacks>] [--no-sync] [--language <lang>] [--targets <targets>]
 br-rules add <rule-id> [--category <cat>] [--severity <sev>] [--targets <targets>]
 br-rules sync
 br-rules diff
@@ -93,6 +93,18 @@ br-rules source list
 br-rules source init [directory] [--force]
 br-rules source check [path]
 br-rules asset list
+```
+
+## Interactive Init
+
+真实 TTY(终端) 下执行 `br-rules init`，且不带 `--stack`、`--language`、`--targets`、`--source`、`--asset` 等选择类参数时，会进入分组向导。
+
+向导中使用上下箭头移动，空格选择或取消，Enter 确认。内置规则资产按语言、框架、中间件、工程实践分组，每个可调整分组都支持“全选当前分组”和“清空当前分组”；输出目标组也支持全选和清空，但至少需要保留一个目标。
+
+非 TTY(终端) 环境和带参数用法保持脚本兼容，会继续走参数模式。需要强制进入向导时使用：
+
+```bash
+br-rules init --interactive
 ```
 
 ## Built-in Assets

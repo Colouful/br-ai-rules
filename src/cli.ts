@@ -25,6 +25,7 @@ program
   .command('init')
   .description('Initialize BR AI Rules config and generate rule files')
   .option('--no-sync', 'Only create .ai-rules/config.json without syncing')
+  .option('--interactive', 'Force interactive setup wizard')
   .option('--language <language>', 'Rule language, default zh-CN')
   .option('--targets <targets>', 'Comma-separated targets: generic,claude,cursor')
   .option('--stack <stack>', 'Comma-separated tech stacks, e.g., react,typescript')
