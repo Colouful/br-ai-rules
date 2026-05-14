@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1778573986509,
+  "lastScanned": 1778726060664,
   "projectRoot": "/Users/lizhenwei/workspace/vueworkspace/bairong/br-ai-rules",
   "techStack": {
     "languages": [
@@ -38,14 +38,14 @@
     "devCommand": "pnpm dev",
     "scripts": {
       "dev": "tsx src/cli.ts",
-      "build": "tsup src/cli.ts --format esm --dts false --clean --out-dir dist --banner.js '#!/usr/bin/env node'",
+      "build": "tsup && rm -rf dist/built-in && cp -r src/built-in dist/built-in",
       "test": "vitest run",
       "typecheck": "tsc --noEmit"
     }
   },
   "conventions": {
     "namingStyle": null,
-    "importStyle": null,
+    "importStyle": "ES modules",
     "testPattern": "*.test.ts",
     "fileOrganization": null
   },
@@ -62,28 +62,56 @@
   },
   "customNotes": [],
   "directoryMap": {
+    "dist": {
+      "path": "dist",
+      "purpose": "Distribution/build output",
+      "fileCount": 1,
+      "lastAccessed": 1778726060599,
+      "keyFiles": [
+        "cli.js"
+      ]
+    },
     "docs": {
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 2,
-      "lastAccessed": 1778573986462,
+      "lastAccessed": 1778726060600,
       "keyFiles": [
         "mvp-spec.md",
         "prd.md"
+      ]
+    },
+    "dogfood-real-project": {
+      "path": "dogfood-real-project",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1778726060600,
+      "keyFiles": [
+        "AGENTS.md",
+        "CLAUDE.md"
+      ]
+    },
+    "dogfood-team-source": {
+      "path": "dogfood-team-source",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1778726060600,
+      "keyFiles": [
+        "br-rules.source.json"
       ]
     },
     "examples": {
       "path": "examples",
       "purpose": "Example code",
       "fileCount": 0,
-      "lastAccessed": 1778573986462,
+      "lastAccessed": 1778726060601,
       "keyFiles": []
     },
     "src": {
       "path": "src",
       "purpose": "Source code",
       "fileCount": 1,
-      "lastAccessed": 1778573986488,
+      "lastAccessed": 1778726060616,
       "keyFiles": [
         "cli.ts"
       ]
@@ -91,12 +119,23 @@
     "tests": {
       "path": "tests",
       "purpose": "Test files",
-      "fileCount": 3,
-      "lastAccessed": 1778573986492,
+      "fileCount": 12,
+      "lastAccessed": 1778726060616,
       "keyFiles": [
         "check.test.ts",
+        "config-version.test.ts",
+        "init-interactive.test.ts",
         "managed-block.test.ts",
-        "render.test.ts"
+        "project-detector.test.ts"
+      ]
+    },
+    "dogfood-team-source/assets": {
+      "path": "dogfood-team-source/assets",
+      "purpose": "Static assets",
+      "fileCount": 1,
+      "lastAccessed": 1778726060621,
+      "keyFiles": [
+        "team.starter-pack.yaml"
       ]
     }
   },
