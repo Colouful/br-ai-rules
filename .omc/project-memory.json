@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1778726060664,
+  "lastScanned": 1778830020387,
   "projectRoot": "/Users/lizhenwei/workspace/vueworkspace/bairong/br-ai-rules",
   "techStack": {
     "languages": [
@@ -66,7 +66,7 @@
       "path": "dist",
       "purpose": "Distribution/build output",
       "fileCount": 1,
-      "lastAccessed": 1778726060599,
+      "lastAccessed": 1778830020351,
       "keyFiles": [
         "cli.js"
       ]
@@ -75,7 +75,7 @@
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 2,
-      "lastAccessed": 1778726060600,
+      "lastAccessed": 1778830020352,
       "keyFiles": [
         "mvp-spec.md",
         "prd.md"
@@ -85,7 +85,7 @@
       "path": "dogfood-real-project",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1778726060600,
+      "lastAccessed": 1778830020359,
       "keyFiles": [
         "AGENTS.md",
         "CLAUDE.md"
@@ -95,7 +95,7 @@
       "path": "dogfood-team-source",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1778726060600,
+      "lastAccessed": 1778830020359,
       "keyFiles": [
         "br-rules.source.json"
       ]
@@ -104,14 +104,14 @@
       "path": "examples",
       "purpose": "Example code",
       "fileCount": 0,
-      "lastAccessed": 1778726060601,
+      "lastAccessed": 1778830020360,
       "keyFiles": []
     },
     "src": {
       "path": "src",
       "purpose": "Source code",
       "fileCount": 1,
-      "lastAccessed": 1778726060616,
+      "lastAccessed": 1778830020360,
       "keyFiles": [
         "cli.ts"
       ]
@@ -120,7 +120,7 @@
       "path": "tests",
       "purpose": "Test files",
       "fileCount": 12,
-      "lastAccessed": 1778726060616,
+      "lastAccessed": 1778830020360,
       "keyFiles": [
         "check.test.ts",
         "config-version.test.ts",
@@ -133,7 +133,7 @@
       "path": "dogfood-team-source/assets",
       "purpose": "Static assets",
       "fileCount": 1,
-      "lastAccessed": 1778726060621,
+      "lastAccessed": 1778830020362,
       "keyFiles": [
         "team.starter-pack.yaml"
       ]
