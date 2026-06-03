@@ -1,6 +1,6 @@
 # BR AI Rules 本地使用流程与规则读取机制说明
 
-> 适用版本：`@br-ai/rules@0.4.0-beta.1`  
+> 适用版本：`@br-ai/rules@0.4.0`  
 > 当前阶段目标：先把本地规则安装、同步、检查、团队本地规则源（含 `source init` / `source check` / `doctor`）用顺；暂不做远端规则源、Web 平台、GitHub source、npm source。
 
 ---
@@ -252,7 +252,7 @@ team-source/
 
 ```json
 {
-  "version": "0.4.0-beta.1",
+  "version": "0.4.0",
   "language": "zh-CN",
   "targets": {
     "generic": true,

@@ -13,7 +13,7 @@
 
 ```json
 {
-  "version": "0.4.0-beta.1",
+  "version": "0.4.0",
   "generatedAt": "2026-05-13T00:00:00.000Z",
   "language": "zh-CN",
   "sources": [

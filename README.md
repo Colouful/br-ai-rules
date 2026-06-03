@@ -1,6 +1,6 @@
 # BR AI Rules
 
-> Current beta: `0.4.0-beta.1`
+> Current version: `0.4.0`
 
 A lightweight AI Coding rules installer for teams.
 
@@ -174,7 +174,7 @@ BR AI Rules 只更新自动生成区，不覆盖团队自定义内容：
 
 ```json
 {
-  "version": "0.4.0-beta.1",
+  "version": "0.4.0",
   "language": "zh-CN",
   "targets": {
     "generic": true,

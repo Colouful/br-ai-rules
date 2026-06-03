@@ -22,7 +22,7 @@ npm install -D @br-ai/rules@beta
 当前期望版本：
 
 ```text
-0.4.0-beta.1
+0.4.0
 ```
 
 ## 3. 最简单初始化
@@ -181,7 +181,7 @@ npx @br-ai/rules@beta add team.my-rule
 
 ```json
 {
-  "version": "0.4.0-beta.1",
+  "version": "0.4.0",
   "language": "zh-CN",
   "targets": {
     "generic": true,

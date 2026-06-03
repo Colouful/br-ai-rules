@@ -19,7 +19,7 @@ Full example:
 
 ```json
 {
-  "version": "0.4.0-beta.1",
+  "version": "0.4.0",
   "language": "zh-CN",
   "targets": {
     "generic": true,

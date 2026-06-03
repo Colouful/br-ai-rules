@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0
+
+### Changed
+
+- 正式发布 stable `0.4.0`（与 `0.4.0-beta.1` 功能一致），npm `latest` 指向本版本。
+
 ## 0.4.0-beta.1
 
 ### Added
